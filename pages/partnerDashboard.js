@@ -39,9 +39,8 @@ export default function PartnerDashboard({ userId }) {
   const router = useRouter();
 
   const stats = {
-    casesReferred: 24,
-    casesAccepted: 18,
-    totalEarnings: "₹45,000",
+    casesReferred: partnerData ? partnerData.casesReferred : '',
+    totalEarnings: partnerData ? partnerData.earning : '',
     referralCode: partnerData ? partnerData.partnerRef : ''
   };
 
@@ -90,7 +89,7 @@ export default function PartnerDashboard({ userId }) {
   };
 
   if (showCreateCase) {
-    return <CreateCase />;
+    return <CreateCase partnerRef={partnerData.partnerRef}/>;
   }
 
   if (showViewCaseStatus && partnerData) {
@@ -156,13 +155,6 @@ export default function PartnerDashboard({ userId }) {
               <p className="text-sm font-semibold text-gray-600 mb-1">Cases Referred</p>
               <p className="text-3xl font-bold text-blue-600">{stats.casesReferred}</p>
             </div>
-
-            {/* Cases Accepted */}
-            <div className="text-center p-4 border-b md:border-b-0 md:border-r border-gray-200">
-              <p className="text-sm font-semibold text-gray-600 mb-1">Cases Accepted</p>
-              <p className="text-3xl font-bold text-green-600">{stats.casesAccepted}</p>
-            </div>
-
             {/* Total Earnings */}
             <div className="text-center p-4 border-b md:border-b-0 md:border-r border-gray-200">
               <p className="text-sm font-semibold text-gray-600 mb-1">Total Earnings</p>

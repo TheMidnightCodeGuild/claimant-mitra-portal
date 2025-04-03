@@ -6,7 +6,7 @@ import { doc, setDoc, collection } from 'firebase/firestore';
 function CreateAccount() {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    const [companyName, setCompanyName] = useState('');
+    const [source, setsource] = useState('');
     const [phoneNumber, setPhoneNumber] = useState('');
     const [error, setError] = useState(null);
   
@@ -19,8 +19,11 @@ function CreateAccount() {
         const partnersCollection = collection(db, 'partners');
         await setDoc(doc(partnersCollection, user.uid), {
           email: user.email,
-          companyName,
+          source,
           phoneNumber,
+          earning: 0,
+          casesReferred: 0,
+          partnerRef: (source.substring(0, 4) + phoneNumber.slice(-4)).toUpperCase(),
           createdAt: new Date().toISOString(),
           userId: user.uid,
         });
@@ -64,13 +67,13 @@ function CreateAccount() {
                 />
               </div>
               <div>
-                <label htmlFor="companyName" className="sr-only">Company Name</label>
+                <label htmlFor="sourceName" className="sr-only">source Name</label>
                 <input
-                  id="companyName"
+                  id="source"
                   type="text"
-                  value={companyName}
-                  onChange={(e) => setCompanyName(e.target.value)}
-                  placeholder="Company Name"
+                  value={source}
+                  onChange={(e) => setsource(e.target.value)}
+                  placeholder="source"
                   required
                   className="appearance-none rounded-lg relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                 />

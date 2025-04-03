@@ -1,9 +1,9 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { db } from '../../lib/firebase';
-import { collection, addDoc } from 'firebase/firestore';
+import { collection, addDoc, doc, updateDoc, increment, getDoc } from 'firebase/firestore';
 import { useRouter } from 'next/router';
 
-export default function CreateCase() {
+export default function CreateCase({ partnerRef }) {
   const router = useRouter();
   const [formData, setFormData] = useState({
     name: '',
@@ -16,6 +16,29 @@ export default function CreateCase() {
   });
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [partnerData, setPartnerData] = useState(null);
+
+  useEffect(() => {
+    const fetchPartnerData = async () => {
+      try {
+        const docRef = doc(db, 'partners', partnerRef);
+        const docSnap = await getDoc(docRef);
+
+        if (docSnap.exists()) {
+          setPartnerData(docSnap.data());
+        } else {
+          setError('Partner data not found');
+        }
+      } catch (err) {
+        console.error('Error fetching partner data:', err);
+        setError('Failed to load partner data');
+      }
+    };
+
+    if (partnerRef) {
+      fetchPartnerData();
+    }
+  }, [partnerRef]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -36,7 +59,7 @@ export default function CreateCase() {
         ...formData,
         estimatedClaimAmount: Number(formData.estimatedClaimAmount),
         mobile: Number(formData.mobile),
-        partnerRef: partnerData ? partnerData.partnerRef : '', // Default values start here
+        partnerRef: partnerRef,// Default values start here
         complaintDate: new Date().toISOString(),
         takenForReview: false,
         reviewStatus: 'pending',
@@ -67,6 +90,15 @@ export default function CreateCase() {
 
       // Add the document to Firestore
       const docRef = await addDoc(collection(db, 'users'), userDoc);
+
+      // Update the casesReferred field of the partner
+      if (partnerRef) {
+        const partnerDocRef = doc(db, 'partners', partnerRef);
+        await updateDoc(partnerDocRef, {
+          casesReferred: increment(1)
+        });
+      }
+
       alert('Case created successfully!');
       router.push('/partnerDashboard').then(() => {
         router.reload();
@@ -225,4 +257,5 @@ export default function CreateCase() {
         </div>
       </div>
     </div>
-  )};
+  );
+}
