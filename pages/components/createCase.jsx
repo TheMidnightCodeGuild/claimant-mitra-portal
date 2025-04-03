@@ -1,6 +1,14 @@
 import { useState, useEffect } from 'react';
 import { db } from '../../lib/firebase';
-import { collection, addDoc, doc, updateDoc, increment, getDoc } from 'firebase/firestore';
+import { 
+  collection, 
+  addDoc, 
+  doc, 
+  updateDoc, 
+  increment, 
+  getDoc, 
+  setDoc 
+} from 'firebase/firestore';
 import { useRouter } from 'next/router';
 
 export default function CreateCase({ partnerRef }) {
@@ -59,7 +67,7 @@ export default function CreateCase({ partnerRef }) {
         ...formData,
         estimatedClaimAmount: Number(formData.estimatedClaimAmount),
         mobile: Number(formData.mobile),
-        partnerRef: partnerRef,// Default values start here
+        partnerRef: partnerRef,
         complaintDate: new Date().toISOString(),
         takenForReview: false,
         reviewStatus: 'pending',
@@ -94,16 +102,30 @@ export default function CreateCase({ partnerRef }) {
       // Update the casesReferred field of the partner
       if (partnerRef) {
         const partnerDocRef = doc(db, 'partners', partnerRef);
-        await updateDoc(partnerDocRef, {
-          casesReferred: increment(1)
-        });
+        const partnerSnap = await getDoc(partnerDocRef);
+
+        if (partnerSnap.exists()) {
+          // If the document exists, update it
+          await updateDoc(partnerDocRef, {
+            casesReferred: increment(1)
+          });
+        } else {
+          // If the document doesn't exist or casesReferred field doesn't exist,
+          // create it with initial value
+          await setDoc(partnerDocRef, {
+            casesReferred: 1,
+            // Preserve any existing partner data if it exists
+            ...(partnerData || {})
+          }, { merge: true });
+        }
       }
 
       alert('Case created successfully!');
       router.push('/partnerDashboard').then(() => {
         router.reload();
-      }); // Redirect back to dashboard and reload
+      });
     } catch (err) {
+      console.error('Error creating case:', err); // Add this for debugging
       setError('Failed to create case: ' + err.message);
     } finally {
       setLoading(false);
