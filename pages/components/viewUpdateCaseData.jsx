@@ -98,7 +98,6 @@ export default function ViewUpdateCaseData({ partnerRef }) {
         email: editForm.email
       });
 
-      // Update local state
       setCases(cases.map(c => 
         c.id === id 
           ? { ...c, ...editForm, estimatedClaimAmount: Number(editForm.estimatedClaimAmount) }
@@ -124,11 +123,9 @@ export default function ViewUpdateCaseData({ partnerRef }) {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50 p-4">
-        <div className="max-w-7xl mx-auto">
-          <div className="flex justify-center items-center h-64">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
-          </div>
+      <div className="min-h-screen bg-gradient-to-b from-blue-50 to-white p-4">
+        <div className="flex justify-center items-center h-64">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-4 border-blue-600"></div>
         </div>
       </div>
     );
@@ -136,177 +133,123 @@ export default function ViewUpdateCaseData({ partnerRef }) {
 
   if (error) {
     return (
-      <div className="min-h-screen bg-gray-50 p-4">
-        <div className="max-w-7xl mx-auto">
-          <div className="bg-red-50 border border-red-200 rounded-md p-4">
-            <p className="text-red-600">{error}</p>
-          </div>
+      <div className="min-h-screen bg-gradient-to-b from-blue-50 to-white p-4">
+        <div className="bg-red-50 border-l-4 border-red-400 p-4 rounded-md">
+          <p className="text-red-700">{error}</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 p-4">
-      <div className="max-w-full mx-auto">
-        <div className="flex justify-between items-center mb-6">
-          <h2 className="text-2xl font-bold text-gray-900">Case Details</h2>
-          <p className="text-sm text-gray-600">Partner Reference: {partnerRef}</p>
+    <div className="min-h-screen bg-gradient-to-b from-blue-50 to-white p-2 sm:p-4 md:p-6">
+      <div className="max-w-7xl mx-auto">
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-2">
+          <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 bg-clip-text bg-gradient-to-r from-blue-600 to-blue-800">
+            Case Details
+          </h2>
+          <p className="text-sm font-medium text-gray-600 bg-blue-50 px-3 py-1 rounded-full">
+            Partner ID: {partnerRef}
+          </p>
         </div>
-        
+
         {cases.length === 0 ? (
-          <div className="bg-white rounded-lg shadow p-6 text-center">
-            <p className="text-gray-500">No cases found for this partner</p>
+          <div className="bg-white rounded-xl shadow-lg p-8 text-center border border-gray-100">
+            <svg className="w-16 h-16 mx-auto text-gray-400 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+            </svg>
+            <p className="text-gray-500 text-lg">No cases found for this partner</p>
           </div>
         ) : (
-          <div className="overflow-x-auto shadow-lg rounded-lg">
-            <table className="min-w-full bg-white">
-              <thead className="bg-gray-50">
-                <tr>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Client Details</th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Contact Info</th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Company Details</th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Case Status</th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Review Details</th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Documents & Dates</th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-gray-200">
-                {cases.map((caseItem) => (
-                  <tr key={caseItem.id} className="hover:bg-gray-50">
-                    {/* Client Details */}
-                    <td className="px-4 py-4">
+          <div className="space-y-4">
+            {cases.map((caseItem) => (
+              <div key={caseItem.id} className="bg-white rounded-xl shadow-lg overflow-hidden border border-gray-100">
+                <div className="p-4 sm:p-6">
+                  {/* Header Section */}
+                  <div className="flex flex-wrap justify-between items-center mb-4">
+                    <div className="flex-1 min-w-0 mr-4">
+                      <h3 className="text-lg font-semibold text-gray-900 truncate">{caseItem.name || 'N/A'}</h3>
+                      <p className="text-sm text-gray-500">Claim Amount: {formatCurrency(caseItem.estimatedClaimAmount || 0)}</p>
+                    </div>
+                    <div>
                       {editingId === caseItem.id ? (
-                        <div className="space-y-2">
-                          <input
-                            type="text"
-                            value={editForm.name}
-                            onChange={(e) => setEditForm({ ...editForm, name: e.target.value })}
-                            className="w-full px-2 py-1 text-sm border rounded"
-                            placeholder="Name"
-                          />
-                          <input
-                            type="number"
-                            value={editForm.estimatedClaimAmount}
-                            onChange={(e) => setEditForm({ ...editForm, estimatedClaimAmount: e.target.value })}
-                            className="w-full px-2 py-1 text-sm border rounded"
-                            placeholder="Claim Amount"
-                          />
-                        </div>
-                      ) : (
-                        <>
-                          <div className="text-sm font-medium text-gray-900">{caseItem.name || 'N/A'}</div>
-                          <div className="text-sm text-gray-500">
-                            Claim Amount: {formatCurrency(caseItem.estimatedClaimAmount || 0)}
-                          </div>
-                        </>
-                      )}
-                    </td>
-
-                    {/* Contact Info */}
-                    <td className="px-4 py-4">
-                      {editingId === caseItem.id ? (
-                        <div className="space-y-2">
-                          <input
-                            type="tel"
-                            value={editForm.mobile}
-                            onChange={(e) => setEditForm({ ...editForm, mobile: e.target.value })}
-                            className="w-full px-2 py-1 text-sm border rounded"
-                            placeholder="Mobile"
-                          />
-                          <input
-                            type="email"
-                            value={editForm.email}
-                            onChange={(e) => setEditForm({ ...editForm, email: e.target.value })}
-                            className="w-full px-2 py-1 text-sm border rounded"
-                            placeholder="Email"
-                          />
-                        </div>
-                      ) : (
-                        <>
-                          <div className="text-sm text-gray-900">{caseItem.mobile || 'N/A'}</div>
-                          <div className="text-sm text-gray-500">{caseItem.email || 'N/A'}</div>
-                        </>
-                      )}
-                    </td>
-
-                    {/* Company Details */}
-                    <td className="px-4 py-4">
-                      <div className="text-sm text-gray-900">{caseItem.companyName || 'N/A'}</div>
-                      <div className="text-sm text-gray-500">
-                        Claim #: {caseItem.claimNo || 'N/A'}
-                      </div>
-                      <div className="text-sm text-gray-500">
-                        Policy #: {caseItem.policyNo || 'N/A'}
-                      </div>
-                    </td>
-
-                    {/* Case Status */}
-                    <td className="px-4 py-4">
-                      <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${getStatusBadgeColor(caseItem.reviewStatus)}`}>
-                        {caseItem.reviewStatus || 'Pending'}
-                      </span>
-                      <div className="text-sm text-gray-500 mt-1">
-                        {caseItem.solved ? 'Solved' : 'In Progress'}
-                      </div>
-                    </td>
-
-                    {/* Review Details */}
-                    <td className="px-4 py-4">
-                      <div className="text-sm text-gray-900">
-                        {caseItem.takenForReview ? 'Under Review' : 'Pending Review'}
-                      </div>
-                      {caseItem.caseRejectionReason && (
-                        <div className="text-sm text-red-600 mt-1">
-                          Rejection: {caseItem.caseRejectionReason}
-                        </div>
-                      )}
-                    </td>
-
-                    {/* Documents & Dates */}
-                    <td className="px-4 py-4">
-                      <div className="text-sm text-gray-900">
-                        Documents: {caseItem.documentShort ? 
-                          <span className="text-red-600">Incomplete</span> : 
-                          <span className="text-green-600">Complete</span>
-                        }
-                      </div>
-                      <div className="text-sm text-gray-500">
-                        Accepted: {formatDate(caseItem.caseAcceptanceDate)}
-                      </div>
-                    </td>
-
-                    {/* Actions Column */}
-                    <td className="px-4 py-4">
-                      {editingId === caseItem.id ? (
-                        <div className="space-x-2">
-                          <button
-                            onClick={() => handleSave(caseItem.id)}
-                            className="px-3 py-1 text-xs font-medium text-white bg-green-600 rounded hover:bg-green-700"
-                          >
+                        <div className="flex space-x-2">
+                          <button onClick={() => handleSave(caseItem.id)} className="px-3 py-1.5 text-sm font-medium text-white bg-green-600 rounded-lg hover:bg-green-700 transition-colors">
                             Save
                           </button>
-                          <button
-                            onClick={handleCancel}
-                            className="px-3 py-1 text-xs font-medium text-gray-700 bg-gray-100 rounded hover:bg-gray-200"
-                          >
+                          <button onClick={handleCancel} className="px-3 py-1.5 text-sm font-medium text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors">
                             Cancel
                           </button>
                         </div>
                       ) : (
-                        <button
-                          onClick={() => handleEdit(caseItem)}
-                          className="px-3 py-1 text-xs font-medium text-white bg-blue-600 rounded hover:bg-blue-700"
-                        >
+                        <button onClick={() => handleEdit(caseItem)} className="px-3 py-1.5 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition-colors">
                           Edit
                         </button>
                       )}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+                    </div>
+                  </div>
+
+                  {/* Content Grid */}
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                    {/* Contact Info */}
+                    <div className="space-y-2">
+                      <h4 className="text-sm font-medium text-gray-700">Contact Information</h4>
+                      {editingId === caseItem.id ? (
+                        <div className="space-y-2">
+                          <input type="tel" value={editForm.mobile} onChange={(e) => setEditForm({...editForm, mobile: e.target.value})} 
+                            className="w-full px-3 py-2 text-sm border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" placeholder="Mobile"/>
+                          <input type="email" value={editForm.email} onChange={(e) => setEditForm({...editForm, email: e.target.value})}
+                            className="w-full px-3 py-2 text-sm border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent" placeholder="Email"/>
+                        </div>
+                      ) : (
+                        <>
+                          <p className="text-sm text-gray-600">📱 {caseItem.mobile || 'N/A'}</p>
+                          <p className="text-sm text-gray-600">✉️ {caseItem.email || 'N/A'}</p>
+                        </>
+                      )}
+                    </div>
+
+                    {/* Company Details */}
+                    <div className="space-y-2">
+                      <h4 className="text-sm font-medium text-gray-700">Company Details</h4>
+                      <p className="text-sm text-gray-600">Company: {caseItem.companyName || 'N/A'}</p>
+                      <p className="text-sm text-gray-600">Claim #: {caseItem.claimNo || 'N/A'}</p>
+                      <p className="text-sm text-gray-600">Policy #: {caseItem.policyNo || 'N/A'}</p>
+                    </div>
+
+                    {/* Status & Review */}
+                    <div className="space-y-2">
+                      <h4 className="text-sm font-medium text-gray-700">Status & Review</h4>
+                      <div className="flex items-center space-x-2">
+                        <span className={`px-2.5 py-1 text-xs font-semibold rounded-full ${getStatusBadgeColor(caseItem.reviewStatus)}`}>
+                          {caseItem.reviewStatus || 'Pending'}
+                        </span>
+                        <span className={`px-2.5 py-1 text-xs font-semibold rounded-full ${caseItem.solved ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'}`}>
+                          {caseItem.solved ? 'Solved' : 'In Progress'}
+                        </span>
+                      </div>
+                      {caseItem.caseRejectionReason && (
+                        <p className="text-sm text-red-600">Rejection: {caseItem.caseRejectionReason}</p>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Footer Section */}
+                  <div className="mt-4 pt-4 border-t border-gray-100">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                      <div>
+                        <span className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium ${caseItem.documentShort ? 'bg-red-100 text-red-800' : 'bg-green-100 text-green-800'}`}>
+                          Documents: {caseItem.documentShort ? 'Incomplete' : 'Complete'}
+                        </span>
+                      </div>
+                      <div className="text-sm text-gray-500">
+                        Acceptance Date: {formatDate(caseItem.caseAcceptanceDate)}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ))}
           </div>
         )}
       </div>

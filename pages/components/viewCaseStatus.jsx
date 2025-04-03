@@ -18,7 +18,6 @@ export default function ViewCaseStatus({ partnerRef }) {
 
   const fetchCases = async () => {
     try {
-      console.log('Fetching cases for partner:', partnerRef); // Debug log
       const q = query(
         collection(db, 'users'),
         where('partnerRef', '==', partnerRef)
@@ -30,10 +29,9 @@ export default function ViewCaseStatus({ partnerRef }) {
         ...doc.data()
       }));
 
-      console.log('Found cases:', casesData.length); // Debug log
       setCases(casesData);
     } catch (err) {
-      console.error('Error fetching cases:', err); // Debug log
+      console.error('Error fetching cases:', err);
       setError('Failed to fetch cases: ' + err.message);
     } finally {
       setLoading(false);
@@ -68,10 +66,10 @@ export default function ViewCaseStatus({ partnerRef }) {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50 p-4">
+      <div className="min-h-screen bg-gradient-to-b from-blue-50 to-white p-4">
         <div className="max-w-7xl mx-auto">
           <div className="flex justify-center items-center h-64">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+            <div className="animate-spin rounded-full h-12 w-12 border-b-4 border-blue-600"></div>
           </div>
         </div>
       </div>
@@ -80,10 +78,10 @@ export default function ViewCaseStatus({ partnerRef }) {
 
   if (error) {
     return (
-      <div className="min-h-screen bg-gray-50 p-4">
+      <div className="min-h-screen bg-gradient-to-b from-blue-50 to-white p-4">
         <div className="max-w-7xl mx-auto">
-          <div className="bg-red-50 border border-red-200 rounded-md p-4">
-            <p className="text-red-600">{error}</p>
+          <div className="bg-red-50 border-l-4 border-red-400 p-4 rounded-md shadow-sm">
+            <p className="text-red-700 font-medium">{error}</p>
           </div>
         </div>
       </div>
@@ -91,69 +89,82 @@ export default function ViewCaseStatus({ partnerRef }) {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 p-4">
+    <div className="min-h-screen bg-gradient-to-b from-blue-50 to-white p-2 sm:p-4 md:p-6">
       <div className="max-w-7xl mx-auto">
-        <div className="flex justify-between items-center mb-6">
-          <h2 className="text-2xl font-bold text-gray-900">Case Status Overview</h2>
-          <p className="text-sm text-gray-600">Partner Reference: {partnerRef}</p>
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-2">
+          <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 bg-clip-text bg-gradient-to-r from-blue-600 to-blue-800">
+            Case Status Overview
+          </h2>
+          <p className="text-xl font-bold text-gray-600 bg-blue-50 px-3 py-1 rounded-full">
+            Partner ID: {partnerRef}
+          </p>
         </div>
         
         {cases.length === 0 ? (
-          <div className="bg-white rounded-lg shadow p-6 text-center">
-            <p className="text-gray-500">No cases found for this partner</p>
+          <div className="bg-white rounded-xl shadow-lg p-8 text-center border border-gray-100">
+            <svg className="w-16 h-16 mx-auto text-gray-400 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+            </svg>
+            <p className="text-gray-500 text-lg">No cases found for this partner</p>
           </div>
         ) : (
-          <div className="overflow-x-auto">
-            <table className="min-w-full bg-white rounded-lg shadow">
-              <thead className="bg-gray-50">
-                <tr>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Mobile</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Review Status</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Documents</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Rejection Reason</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Acceptance Date</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Case Status</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-gray-200">
-                {cases.map((caseItem) => (
-                  <tr key={caseItem.id} className="hover:bg-gray-50">
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="text-sm font-medium text-gray-900">{caseItem.name || 'N/A'}</div>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="text-sm text-gray-500">{caseItem.mobile || 'N/A'}</div>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${getStatusBadgeColor(caseItem.reviewStatus)}`}>
-                        {caseItem.reviewStatus || 'Pending'}
-                      </span>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="text-sm text-gray-500">
-                        {caseItem.documentShort ? 'Incomplete' : 'Complete'}
-                      </div>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="text-sm text-gray-500">
-                        {caseItem.caseRejectionReason || 'N/A'}
-                      </div>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="text-sm text-gray-500">
-                        {formatDate(caseItem.caseAcceptanceDate)}
-                      </div>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${caseItem.solved ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'}`}>
-                        {caseItem.solved ? 'Solved' : 'In Progress'}
-                      </span>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+          <div className="bg-white rounded-xl shadow-lg overflow-hidden border border-gray-100">
+            <div className="overflow-x-auto">
+              <div className="inline-block min-w-full">
+                <div className="overflow-hidden">
+                  <table className="min-w-full">
+                    <thead className="bg-gradient-to-r from-blue-50 to-blue-100">
+                      <tr>
+                        <th scope="col" className="px-4 sm:px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Name</th>
+                        <th scope="col" className="px-4 sm:px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider hidden sm:table-cell">Mobile</th>
+                        <th scope="col" className="px-4 sm:px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Status</th>
+                        <th scope="col" className="px-4 sm:px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider hidden md:table-cell">Documents</th>
+                        <th scope="col" className="px-4 sm:px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider hidden lg:table-cell">Rejection Reason</th>
+                        <th scope="col" className="px-4 sm:px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider hidden lg:table-cell">Acceptance Date</th>
+                        <th scope="col" className="px-4 sm:px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Progress</th>
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-gray-100">
+                      {cases.map((caseItem) => (
+                        <tr key={caseItem.id} className="hover:bg-gray-50 transition-colors duration-200">
+                          <td className="px-4 sm:px-6 py-4 whitespace-nowrap">
+                            <div className="text-sm font-medium text-gray-900">{caseItem.name || 'N/A'}</div>
+                          </td>
+                          <td className="px-4 sm:px-6 py-4 whitespace-nowrap hidden sm:table-cell">
+                            <div className="text-sm text-gray-500">{caseItem.mobile || 'N/A'}</div>
+                          </td>
+                          <td className="px-4 sm:px-6 py-4 whitespace-nowrap">
+                            <span className={`px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full ${getStatusBadgeColor(caseItem.reviewStatus)}`}>
+                              {caseItem.reviewStatus || 'Pending'}
+                            </span>
+                          </td>
+                          <td className="px-4 sm:px-6 py-4 whitespace-nowrap hidden md:table-cell">
+                            <span className={`px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full ${caseItem.documentShort ? 'bg-red-100 text-red-800' : 'bg-green-100 text-green-800'}`}>
+                              {caseItem.documentShort ? 'Incomplete' : 'Complete'}
+                            </span>
+                          </td>
+                          <td className="px-4 sm:px-6 py-4 whitespace-nowrap hidden lg:table-cell">
+                            <div className="text-sm text-gray-500 max-w-xs truncate">
+                              {caseItem.caseRejectionReason || 'N/A'}
+                            </div>
+                          </td>
+                          <td className="px-4 sm:px-6 py-4 whitespace-nowrap hidden lg:table-cell">
+                            <div className="text-sm text-gray-500">
+                              {formatDate(caseItem.caseAcceptanceDate)}
+                            </div>
+                          </td>
+                          <td className="px-4 sm:px-6 py-4 whitespace-nowrap">
+                            <span className={`px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full ${caseItem.solved ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'}`}>
+                              {caseItem.solved ? 'Solved' : 'In Progress'}
+                            </span>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
           </div>
         )}
       </div>
