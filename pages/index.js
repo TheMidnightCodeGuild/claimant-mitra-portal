@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useRouter } from 'next/router';
-
+import Image from "next/image";
 export default function Home() {
   const router = useRouter();
   const [username, setUsername] = useState("");
@@ -38,7 +38,7 @@ export default function Home() {
     <div className="min-h-screen flex items-center justify-center bg-cover bg-center bg-no-repeat px-4 sm:px-6 lg:px-8" style={{ backgroundImage: "url('/images/bgsignin.jpg')" }}>
       <div className="w-full max-w-sm sm:max-w-md space-y-6 sm:space-y-8 p-4 sm:p-6 md:p-8 bg-white rounded-xl shadow-2xl border-black border-4">
         <div className="text-center">
-          <img src="/images/logo.png" alt="Logo" className="mx-auto h-16 sm:h-20 w-auto" />
+          <Image src="/images/logo.png" width={100} height={100} alt="Logo" className="mx-auto h-16 sm:h-20 w-auto" />
           <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">Welcome Partner</h2>
           <p className="text-sm sm:text-base text-gray-600">Please sign in to continue</p>
         </div>

@@ -3,6 +3,7 @@ import { useRouter } from 'next/router';
 import { db } from '../lib/firebase';
 import { doc, getDoc } from 'firebase/firestore';
 import dynamic from 'next/dynamic';
+import Image from 'next/image';
 
 const CreateCase = dynamic(() => import('./components/createCase'));
 const ViewCaseStatus = dynamic(() => import('./components/viewCaseStatus'));
@@ -140,11 +141,16 @@ export default function PartnerDashboard({ userId }) {
     <div className="min-h-screen bg-gradient-to-b from-gray-50 to-gray-100">
       {/* Header Section */}
       <div className="p-4 sm:p-8 bg-white shadow-sm">
-        <div className="max-w-7xl mx-auto px-2 sm:px-0">
-          <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">
-            {partnerData ? `Welcome, ${partnerData.email}` : 'Partner Dashboard'}
-          </h2>
-          <p className="text-sm sm:text-base text-gray-600">Manage your cases and track performance</p>
+        <div className="max-w-7xl mx-auto px-2 sm:px-0 flex items-center">
+          <div className="mr-4">
+          <Image src="/images/logo.png" width={100} height={100} alt="Logo" className="mx-auto h-16 sm:h-20 w-auto" />
+          </div>
+          <div>
+            <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2 mx-44">
+              {partnerData ? `Welcome, ${partnerData.email}` : 'Partner Dashboard'}
+            </h2>
+            <p className="text-sm sm:text-base text-gray-600 mx-60">Manage your cases and track performance</p>
+          </div>
           {error && (
             <div className="mt-4 p-3 sm:p-4 bg-red-50 rounded-lg border border-red-200">
               <p className="text-sm sm:text-base text-red-600">{error}</p>
@@ -200,7 +206,7 @@ export default function PartnerDashboard({ userId }) {
 
       {/* Actions Grid */}
       <div className="max-w-7xl mx-auto p-4 sm:p-8">
-        <h3 className="text-lg sm:text-xl font-semibold text-gray-800 mb-4 sm:mb-6">Quick Actions</h3>
+        <h3 className="text-lg sm:text-2xl font-semibold text-gray-800 mb-4 sm:mb-6">Quick Actions</h3>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
           {/* Create Case Card */}
           <div 
@@ -245,7 +251,7 @@ export default function PartnerDashboard({ userId }) {
           </div>
 
           {/* Update Case Data Card */}
-          <div 
+          {/* <div 
             onClick={() => handleActionClick('Update Case Data')}
             className="bg-white rounded-xl shadow-lg p-4 sm:p-6 cursor-pointer transform transition-all duration-200 hover:scale-105 hover:shadow-xl border border-gray-100"
           >
@@ -256,7 +262,7 @@ export default function PartnerDashboard({ userId }) {
             </div>
             <h3 className="text-lg sm:text-xl font-semibold text-gray-900 mb-1 sm:mb-2">View / Update Case Data</h3>
             <p className="text-sm sm:text-base text-gray-600">Modify existing case information</p>
-          </div>
+          </div> */}
         </div>
       </div>
     </div>
