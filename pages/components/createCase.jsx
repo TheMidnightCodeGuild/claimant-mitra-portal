@@ -3,11 +3,8 @@ import { db } from '../../lib/firebase';
 import { 
   collection, 
   addDoc, 
-  doc, 
-  updateDoc, 
-  increment, 
-  getDoc, 
-  setDoc 
+  doc,
+  getDoc
 } from 'firebase/firestore';
 import { useRouter } from 'next/router';
 
@@ -29,25 +26,29 @@ export default function CreateCase({ partnerRef }) {
 
   useEffect(() => {
     const fetchPartnerData = async () => {
-      try {
-        const docRef = doc(db, 'partners', partnerRef);
-        const docSnap = await getDoc(docRef);
-
-        if (docSnap.exists()) {
-          setPartnerData(docSnap.data());
-        } else {
-          setError('Partner data not found');
-        }
-      } catch (err) {
-        console.error('Error fetching partner data:', err);
-        setError('Failed to load partner data');
+      if (!partnerRef) {
+        setError('Partner reference not provided');
+        return;
       }
+
+      // try {
+      //   const docRef = doc(db, 'partners', partnerRef);
+      //   const docSnap = await getDoc(docRef);
+
+      //   if (docSnap.exists()) {
+      //     setPartnerData(docSnap.data());
+      //   } else {
+      //     setError('Partner data not found. Please check the partner reference.');
+      //     router.push('/error');
+      //   }
+      // } catch (err) {
+      //   console.error('Error fetching partner data:', err);
+      //   setError('Failed to load partner data. Please try again later.');
+      // }
     };
 
-    if (partnerRef) {
-      fetchPartnerData();
-    }
-  }, [partnerRef]);
+    fetchPartnerData();
+  }, [partnerRef, router]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -62,18 +63,27 @@ export default function CreateCase({ partnerRef }) {
     setLoading(true);
     setError(null);
 
+    if (!partnerData) {
+      setError('Cannot create case: Partner data not found');
+      setLoading(false);
+      return;
+    }
+
     try {
       // Create the user document with default values
       const userDoc = {
         ...formData,
-        estimatedClaimAmount: Number(formData.estimatedClaimAmount),
-        mobile: Number(formData.mobile),
+        estimatedClaimAmount: formData.estimatedClaimAmount ? Number(formData.estimatedClaimAmount) : 0,
+        mobile: formData.mobile ? Number(formData.mobile) : null,
         partnerRef: partnerRef,
         complaintDate: new Date().toISOString(),
         takenForReview: false,
-        reviewStatus: 'pending',
+        reviewDate: null,
+        status: 'pending',
         documentShort: true,
         caseRejectionReason: '',
+        caseRejectionDate: null,
+        rejected: false,
         caseAcceptanceDate: null,
         mainLogs: [],
         internalLogs: [],
@@ -85,37 +95,21 @@ export default function CreateCase({ partnerRef }) {
         ombudsman: false,
         ombudsmanDate: null,
         ombudsmanCourierDate: null,
-        ombudsmanCheckDate: null,
+        ombudsmanFollowUpDate: null,
         ombudsmanComplaintNumber: '',
         sixAFormSubmitted: false,
         ombudsmanMode: '',
         ombudsmanLogs: [],
         ombudsmanRejectionReason: '',
         solved: false,
+        solvedDate: null,
         claim: 0,
         commisionReceived: 0,
         partnerCommision: 0
       };
 
       // Add the document to Firestore
-      const docRef = await addDoc(collection(db, 'users'), userDoc);
-
-      // Update the casesReferred field of the partner
-      if (partnerRef) {
-        const partnerDocRef = doc(db, 'partners', partnerRef);
-        const partnerSnap = await getDoc(partnerDocRef);
-
-        if (partnerSnap.exists()) {
-          await updateDoc(partnerDocRef, {
-            casesReferred: increment(1)
-          });
-        } else {
-          await setDoc(partnerDocRef, {
-            casesReferred: 1,
-            ...(partnerData || {})
-          }, { merge: true });
-        }
-      }
+      await addDoc(collection(db, 'users'), userDoc);
 
       setShowSuccessPopup(true);
       setTimeout(() => {
@@ -139,7 +133,7 @@ export default function CreateCase({ partnerRef }) {
         <div className="bg-white p-4 sm:p-8 md:p-12 rounded-2xl shadow-xl border-2 border-blue-900">
           <div className="text-center mb-6 sm:mb-12">
             <h2 className="text-2xl sm:text-4xl font-bold text-gray-900 mb-2 sm:mb-3">Create New Case</h2>
-            <p className="text-sm sm:text-base text-gray-600">Please fill in all the required information below</p>
+            <p className="text-sm sm:text-base text-gray-600">Please fill in the information below</p>
           </div>
           
           {showSuccessPopup && (
@@ -167,7 +161,6 @@ export default function CreateCase({ partnerRef }) {
                     type="text"
                     name="name"
                     id="name"
-                    required
                     value={formData.name}
                     onChange={handleChange}
                     className="block w-full px-3 sm:px-4 py-2 sm:py-3 rounded-lg border-gray-300 shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200 text-sm sm:text-base"
@@ -183,7 +176,6 @@ export default function CreateCase({ partnerRef }) {
                     type="tel"
                     name="mobile"
                     id="mobile"
-                    required
                     value={formData.mobile}
                     onChange={handleChange}
                     className="block w-full px-3 sm:px-4 py-2 sm:py-3 rounded-lg border-gray-300 shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200 text-sm sm:text-base"
@@ -199,7 +191,6 @@ export default function CreateCase({ partnerRef }) {
                     type="email"
                     name="email"
                     id="email"
-                    required
                     value={formData.email}
                     onChange={handleChange}
                     className="block w-full px-3 sm:px-4 py-2 sm:py-3 rounded-lg border-gray-300 shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200 text-sm sm:text-base"
@@ -220,7 +211,6 @@ export default function CreateCase({ partnerRef }) {
                     type="text"
                     name="companyName"
                     id="companyName"
-                    required
                     value={formData.companyName}
                     onChange={handleChange}
                     className="block w-full px-3 sm:px-4 py-2 sm:py-3 rounded-lg border-gray-300 shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200 text-sm sm:text-base"
@@ -236,7 +226,6 @@ export default function CreateCase({ partnerRef }) {
                     type="number"
                     name="estimatedClaimAmount"
                     id="estimatedClaimAmount"
-                    required
                     value={formData.estimatedClaimAmount}
                     onChange={handleChange}
                     className="block w-full px-3 sm:px-4 py-2 sm:py-3 rounded-lg border-gray-300 shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200 text-sm sm:text-base"
@@ -253,7 +242,6 @@ export default function CreateCase({ partnerRef }) {
                       type="text"
                       name="claimNo"
                       id="claimNo"
-                      required
                       value={formData.claimNo}
                       onChange={handleChange}
                       className="block w-full px-3 sm:px-4 py-2 sm:py-3 rounded-lg border-gray-300 shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200 text-sm sm:text-base"
@@ -269,7 +257,6 @@ export default function CreateCase({ partnerRef }) {
                       type="text"
                       name="policyNo"
                       id="policyNo"
-                      required
                       value={formData.policyNo}
                       onChange={handleChange}
                       className="block w-full px-3 sm:px-4 py-2 sm:py-3 rounded-lg border-gray-300 shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200 text-sm sm:text-base"

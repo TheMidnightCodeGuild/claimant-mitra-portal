@@ -7,7 +7,6 @@ import Image from 'next/image';
 
 const CreateCase = dynamic(() => import('./components/createCase'));
 const ViewCaseStatus = dynamic(() => import('./components/viewCaseStatus'));
-const ViewUpdateCaseData = dynamic(() => import('./components/viewUpdateCaseData'));
 const RaiseIssue = dynamic(() => import('./components/raiseIssue'));
 
 export async function getServerSideProps(context) {
