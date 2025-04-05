@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import { db } from '../lib/firebase';
-import { doc, getDoc } from 'firebase/firestore';
+import { doc, getDoc, collection, query, where, getDocs } from 'firebase/firestore';
 import dynamic from 'next/dynamic';
 import Image from 'next/image';
 
@@ -37,11 +37,13 @@ export default function PartnerDashboard({ userId }) {
   const [showViewUpdateCaseData, setShowViewUpdateCaseData] = useState(false);
   const [showRaiseIssue, setShowRaiseIssue] = useState(false);
   const [showCopyPopup, setShowCopyPopup] = useState(false);
+  const [casesCount, setCasesCount] = useState('0');
+  const [totalEarnings, setTotalEarnings] = useState('₹0');
   const router = useRouter();
 
   const stats = {
-    casesReferred: partnerData?.casesReferred || '0',
-    totalEarnings: partnerData?.earning || '₹0',
+    casesReferred: casesCount,
+    totalEarnings: totalEarnings,
     referralCode: partnerData?.partnerRef || '-'
   };
 
@@ -59,7 +61,24 @@ export default function PartnerDashboard({ userId }) {
         const docSnap = await getDoc(docRef);
 
         if (docSnap.exists()) {
-          setPartnerData(docSnap.data());
+          const data = docSnap.data();
+          setPartnerData(data);
+
+          // Count cases and calculate total earnings for this partner
+          const usersRef = collection(db, 'users');
+          const q = query(usersRef, where('partnerRef', '==', data.partnerRef));
+          const querySnapshot = await getDocs(q);
+          
+          setCasesCount(querySnapshot.size.toString());
+          
+          let totalCommission = 0;
+          querySnapshot.forEach((doc) => {
+            const userData = doc.data();
+            totalCommission += userData.partnerCommision || 0;
+          });
+          
+          setTotalEarnings(`₹${totalCommission}`);
+
         } else {
           setError('Partner data not found');
         }
