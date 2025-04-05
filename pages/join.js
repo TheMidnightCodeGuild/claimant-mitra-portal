@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { db } from '../lib/firebase';
 import { collection, addDoc } from 'firebase/firestore';
 import { useRouter } from 'next/router';
+import Image from 'next/image';
 
 export default function Join() {
   const router = useRouter();
@@ -29,6 +30,11 @@ export default function Join() {
     setError('');
 
     try {
+      // Validate mobile number
+      if (formData.mobile && !/^\d{10}$/.test(formData.mobile)) {
+        throw new Error('Please enter a valid 10-digit mobile number');
+      }
+
       const docData = {
         ...formData,
         mobile: formData.mobile ? Number(formData.mobile) : null,
@@ -46,17 +52,23 @@ export default function Join() {
 
     } catch (err) {
       console.error('Error submitting request:', err);
-      setError('Failed to submit request. Please try again.');
+      setError(err.message || 'Failed to submit request. Please try again.');
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-blue-50 via-blue-100 to-blue-50 py-8 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-md mx-auto">
-        <div className="bg-white rounded-2xl shadow-xl border-2 border-blue-900 p-6 sm:p-8">
+    <div 
+      className="min-h-screen bg-cover bg-center py-5 px-4 sm:px-6 lg:px-8"
+      style={{
+        backgroundImage: "url('/images/bgsignin.jpg')"
+      }}
+    >
+      <div className="max-w-md mx-auto ">
+        <div className="bg-white/90 backdrop-blur-sm rounded-2xl shadow-xl border-2 border-blue-900 p-6 sm:p-8">
           <div className="text-center mb-8">
+            <Image src="/images/logo.png" width={100} height={100} alt="Logo" className="mx-auto h-16 sm:h-20 w-auto mb-4" />
             <h2 className="text-3xl font-bold text-gray-900">Partner Application</h2>
             <p className="mt-2 text-gray-600">Join our network of insurance claim partners</p>
           </div>
@@ -76,6 +88,7 @@ export default function Join() {
                   type="text"
                   name="name"
                   id="name"
+                  placeholder="Enter your full name"
                   required
                   value={formData.name}
                   onChange={handleChange}
@@ -91,6 +104,7 @@ export default function Join() {
                   type="email"
                   name="email"
                   id="email"
+                  placeholder="Enter your email address"
                   required
                   value={formData.email}
                   onChange={handleChange}
@@ -109,6 +123,9 @@ export default function Join() {
                   required
                   value={formData.mobile}
                   onChange={handleChange}
+                  pattern="[0-9]{10}"
+                  maxLength="10"
+                  placeholder="10-digit mobile number"
                   className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
                 />
               </div>
@@ -124,7 +141,7 @@ export default function Join() {
                   required
                   value={formData.source}
                   onChange={handleChange}
-                  placeholder=""
+                  placeholder="Enter your city/location"
                   className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
                 />
               </div>
