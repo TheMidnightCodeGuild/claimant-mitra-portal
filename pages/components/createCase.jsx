@@ -63,11 +63,11 @@ export default function CreateCase({ partnerRef }) {
     setLoading(true);
     setError(null);
 
-    if (!partnerData) {
-      setError('Cannot create case: Partner data not found');
-      setLoading(false);
-      return;
-    }
+    // if (!partnerData) {
+    //   setError('Cannot create case: Partner data not found');
+    //   setLoading(false);
+    //   return;
+    // }
 
     try {
       // Create the user document with default values
