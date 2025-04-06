@@ -8,7 +8,7 @@ export default function Join() {
   const router = useRouter();
   const [formData, setFormData] = useState({
     name: '',
-    email: '',
+    email: '', 
     mobile: '',
     source: ''
   });
@@ -58,61 +58,64 @@ export default function Join() {
   };
 
   return (
-    <div className="min-h-screen bg-cover bg-center py-5 px-4 sm:px-6 lg:px-8"
+    <div className="min-h-screen bg-cover bg-center px-4 sm:px-6 lg:px-8 py-4 sm:py-8"
       style={{
         backgroundImage: "url('/images/bgsignin.jpg')"
       }}>
-      <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+      <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-12">
         
         {/* Left Content Section */}
-        <div className="text-left space-y-6 p-8">
-          <h1 className="text-4xl font-bold text-gray-900">Be the Future of Insurance Claims</h1>
-          <p className="text-lg text-gray-600">Join our growing network of professional claim partners and be part of the digital transformation in insurance.</p>
-          
-          <div className="space-y-4 mt-8">
-            <div className="flex items-center gap-4">
-              <div className="bg-blue-100 p-2 rounded-full">
-                <svg className="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
-              </div>
-              <div>
-                <h3 className="font-semibold">1500+ Active Partners</h3>
-                <p className="text-sm text-gray-500">Join our thriving community of claim experts</p>
-              </div>
-            </div>
+        <div className="text-left px-2 sm:px-4 py-4 sm:py-6">
+          <div className="max-w-lg mx-auto lg:mx-0">
+            <Image 
+              src="/images/join.png" 
+              width={400} 
+              height={300} 
+              alt="Join illustration" 
+              className="w-full h-auto max-w-sm sm:max-w-md mx-auto lg:mx-0 mb-4 sm:mb-6"
+              priority 
+            />
+            <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900 mb-2 sm:mb-4">Transform Insurance Claims with Us</h1>
+            <p className="text-sm sm:text-base text-gray-600 mb-4 sm:mb-6">Partner with us to revolutionize the insurance claims industry and create better experiences for customers.</p>
             
-            <div className="flex items-center gap-4">
-              <div className="bg-blue-100 p-2 rounded-full">
-                <svg className="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
+            <div className="space-y-3 sm:space-y-4">
+              <div className="bg-blue-100 p-3 sm:p-4 rounded-lg">
+                <h3 className="font-semibold text-sm sm:text-base">Growing Partner Network</h3>
+                <p className="text-xs sm:text-sm text-gray-500">Join thousands of successful claim partners nationwide</p>
               </div>
-              <div>
-                <h3 className="font-semibold">Competitive Earnings</h3>
-                <p className="text-sm text-gray-500">Earn attractive commissions on every successful claim</p>
+              
+              <div className="bg-blue-100 p-3 sm:p-4 rounded-lg">
+                <h3 className="font-semibold text-sm sm:text-base">Rewarding Partnership</h3>
+                <p className="text-xs sm:text-sm text-gray-500">Benefit from our competitive commission structure and incentives</p>
               </div>
             </div>
           </div>
         </div>
 
         {/* Right Form Section */}
-        <div className="bg-white/90 backdrop-blur-sm rounded-2xl shadow-xl border-2 border-blue-900 p-6 sm:p-8">
-          <div className="text-center mb-8">
-            <Image src="/images/logo.png" width={100} height={100} alt="Logo" className="mx-auto h-16 sm:h-20 w-auto mb-4" />
-            <h2 className="text-3xl font-bold text-gray-900">Partner Application</h2>
-            <p className="mt-2 text-gray-600">Join our network of insurance claim partners</p>
+        <div className="backdrop-blur-sm rounded-2xl shadow-xl border-2 border-blue-900 p-4 sm:p-6 lg:p-8 max-w-lg mx-auto w-full">
+          <div className="text-center mb-4 sm:mb-6">
+            <Image 
+              src="/images/logo.png" 
+              width={120} 
+              height={120} 
+              alt="Logo" 
+              className="mx-auto h-14 sm:h-16 lg:h-20 w-auto mb-3 sm:mb-4"
+              priority
+            />
+            <h2 className="text-lg sm:text-xl lg:text-2xl font-bold text-gray-900">Partner Application</h2>
+            <p className="mt-1 text-xs sm:text-sm text-gray-600">Join our network of insurance claim partners</p>
           </div>
 
           {success ? (
-            <div className="bg-green-50 border border-green-200 rounded-lg p-4 text-center">
-              <p className="text-green-800 font-medium">Application submitted successfully!</p>
-              <p className="text-green-600 mt-1">Redirecting you...</p>
+            <div className="bg-green-50 border border-green-200 rounded-lg p-3 sm:p-4 text-center">
+              <p className="text-green-800 font-medium text-sm sm:text-base">Application submitted successfully!</p>
+              <p className="text-green-600 mt-1 text-xs sm:text-sm">Redirecting you...</p>
             </div>
           ) : (
-            <form onSubmit={handleSubmit} className="space-y-6">
+            <form onSubmit={handleSubmit} className="space-y-4">
               <div>
-                <label htmlFor="name" className="block text-sm font-medium text-gray-700">Full Name</label>
+                <label htmlFor="name" className="block text-xs sm:text-sm font-medium text-gray-700 mb-1">Full Name</label>
                 <input
                   type="text"
                   name="name"
@@ -121,12 +124,12 @@ export default function Join() {
                   required
                   value={formData.name}
                   onChange={handleChange}
-                  className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+                  className="block w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                 />
               </div>
 
               <div>
-                <label htmlFor="email" className="block text-sm font-medium text-gray-700">Email Address</label>
+                <label htmlFor="email" className="block text-xs sm:text-sm font-medium text-gray-700 mb-1">Email Address</label>
                 <input
                   type="email"
                   name="email"
@@ -135,12 +138,12 @@ export default function Join() {
                   required
                   value={formData.email}
                   onChange={handleChange}
-                  className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+                  className="block w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                 />
               </div>
 
               <div>
-                <label htmlFor="mobile" className="block text-sm font-medium text-gray-700">Mobile Number</label>
+                <label htmlFor="mobile" className="block text-xs sm:text-sm font-medium text-gray-700 mb-1">Mobile Number</label>
                 <input
                   type="tel"
                   name="mobile"
@@ -151,12 +154,12 @@ export default function Join() {
                   pattern="[0-9]{10}"
                   maxLength="10"
                   placeholder="10-digit mobile number"
-                  className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+                  className="block w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                 />
               </div>
 
               <div>
-                <label htmlFor="source" className="block text-sm font-medium text-gray-700">Where are you from?</label>
+                <label htmlFor="source" className="block text-xs sm:text-sm font-medium text-gray-700 mb-1">Where are you from?</label>
                 <input
                   type="text"
                   name="source"
@@ -165,12 +168,12 @@ export default function Join() {
                   value={formData.source}
                   onChange={handleChange}
                   placeholder="Enter your city/location"
-                  className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+                  className="block w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                 />
               </div>
 
               {error && (
-                <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-md">
+                <div className="bg-red-50 border border-red-200 text-red-700 px-3 py-2 rounded-lg text-xs sm:text-sm">
                   {error}
                 </div>
               )}
@@ -178,7 +181,7 @@ export default function Join() {
               <button
                 type="submit"
                 disabled={loading}
-                className={`w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 ${
+                className={`w-full flex justify-center py-2 sm:py-2.5 px-4 border border-transparent rounded-lg text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition duration-150 ${
                   loading ? 'opacity-50 cursor-not-allowed' : ''
                 }`}
               >
