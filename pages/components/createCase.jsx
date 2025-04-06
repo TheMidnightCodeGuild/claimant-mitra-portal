@@ -276,7 +276,7 @@ export default function CreateCase({ partnerRef }) {
             <div className="flex flex-col sm:flex-row justify-end space-y-3 sm:space-y-0 sm:space-x-4 pt-4 sm:pt-6 border-t">
               <button
                 type="button"
-                onClick={() => router.push('/partnerDashboard')}
+                onClick={() => window.location.reload()}
                 className="w-full sm:w-auto px-4 sm:px-6 py-2 sm:py-3 text-sm sm:text-base font-medium text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 transition duration-200"
               >
                 Cancel

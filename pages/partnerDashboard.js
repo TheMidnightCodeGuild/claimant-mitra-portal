@@ -112,9 +112,7 @@ export default function PartnerDashboard({ userId }) {
     }
   };
 
-  if (showCreateCase) {
-    return <CreateCase partnerRef={partnerData?.partnerRef} />;
-  }
+ 
 
   const BackButton = () => (
     <button
@@ -127,6 +125,15 @@ export default function PartnerDashboard({ userId }) {
       Back to Dashboard
     </button>
   );
+
+  if (showCreateCase) {
+    
+
+    return(<div>
+      <BackButton />
+      <CreateCase partnerRef={partnerData?.partnerRef} />;
+    </div>) 
+  }
 
   if (showViewCaseStatus && partnerData) {
     return (
