@@ -137,14 +137,14 @@ export default function PartnerDashboard({ userId }) {
     );
   }
 
-  if (showViewUpdateCaseData && partnerData) {
-    return (
-      <div>
-        <BackButton />
-        <ViewUpdateCaseData partnerRef={partnerData.partnerRef} />
-      </div>
-    );
-  }
+  // if (showViewUpdateCaseData && partnerData) {
+  //   return (
+  //     <div>
+  //       <BackButton />
+  //       <ViewUpdateCaseData partnerRef={partnerData.partnerRef} />
+  //     </div>
+  //   );
+  // }
 
   if (showRaiseIssue && partnerData) {
     return (
