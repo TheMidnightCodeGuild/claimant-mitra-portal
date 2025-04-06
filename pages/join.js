@@ -30,7 +30,6 @@ export default function Join() {
     setError('');
 
     try {
-      // Validate mobile number
       if (formData.mobile && !/^\d{10}$/.test(formData.mobile)) {
         throw new Error('Please enter a valid 10-digit mobile number');
       }
@@ -59,13 +58,45 @@ export default function Join() {
   };
 
   return (
-    <div 
-      className="min-h-screen bg-cover bg-center py-5 px-4 sm:px-6 lg:px-8"
+    <div className="min-h-screen bg-cover bg-center py-5 px-4 sm:px-6 lg:px-8"
       style={{
         backgroundImage: "url('/images/bgsignin.jpg')"
-      }}
-    >
-      <div className="max-w-md mx-auto ">
+      }}>
+      <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+        
+        {/* Left Content Section */}
+        <div className="text-left space-y-6 p-8">
+          <h1 className="text-4xl font-bold text-gray-900">Be the Future of Insurance Claims</h1>
+          <p className="text-lg text-gray-600">Join our growing network of professional claim partners and be part of the digital transformation in insurance.</p>
+          
+          <div className="space-y-4 mt-8">
+            <div className="flex items-center gap-4">
+              <div className="bg-blue-100 p-2 rounded-full">
+                <svg className="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+              </div>
+              <div>
+                <h3 className="font-semibold">1500+ Active Partners</h3>
+                <p className="text-sm text-gray-500">Join our thriving community of claim experts</p>
+              </div>
+            </div>
+            
+            <div className="flex items-center gap-4">
+              <div className="bg-blue-100 p-2 rounded-full">
+                <svg className="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+              </div>
+              <div>
+                <h3 className="font-semibold">Competitive Earnings</h3>
+                <p className="text-sm text-gray-500">Earn attractive commissions on every successful claim</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Right Form Section */}
         <div className="bg-white/90 backdrop-blur-sm rounded-2xl shadow-xl border-2 border-blue-900 p-6 sm:p-8">
           <div className="text-center mb-8">
             <Image src="/images/logo.png" width={100} height={100} alt="Logo" className="mx-auto h-16 sm:h-20 w-auto mb-4" />
@@ -81,9 +112,7 @@ export default function Join() {
           ) : (
             <form onSubmit={handleSubmit} className="space-y-6">
               <div>
-                <label htmlFor="name" className="block text-sm font-medium text-gray-700">
-                  Full Name
-                </label>
+                <label htmlFor="name" className="block text-sm font-medium text-gray-700">Full Name</label>
                 <input
                   type="text"
                   name="name"
@@ -97,9 +126,7 @@ export default function Join() {
               </div>
 
               <div>
-                <label htmlFor="email" className="block text-sm font-medium text-gray-700">
-                  Email Address
-                </label>
+                <label htmlFor="email" className="block text-sm font-medium text-gray-700">Email Address</label>
                 <input
                   type="email"
                   name="email"
@@ -113,9 +140,7 @@ export default function Join() {
               </div>
 
               <div>
-                <label htmlFor="mobile" className="block text-sm font-medium text-gray-700">
-                  Mobile Number
-                </label>
+                <label htmlFor="mobile" className="block text-sm font-medium text-gray-700">Mobile Number</label>
                 <input
                   type="tel"
                   name="mobile"
@@ -131,9 +156,7 @@ export default function Join() {
               </div>
 
               <div>
-                <label htmlFor="source" className="block text-sm font-medium text-gray-700">
-                  Where are you from?
-                </label>
+                <label htmlFor="source" className="block text-sm font-medium text-gray-700">Where are you from?</label>
                 <input
                   type="text"
                   name="source"
