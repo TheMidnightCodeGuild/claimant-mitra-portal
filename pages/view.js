@@ -64,8 +64,6 @@ export default function View({ userId }) {
         return <CreateCase partnerRef={partnerData.partnerRef} />;
       case 'view-case-status':
         return <ViewCaseStatus partnerRef={partnerData.partnerRef} />;
-      case 'update-case-data':
-        return <ViewUpdateCaseData partnerRef={partnerData.partnerRef} />;
       case 'raise-issue':
         return <RaiseIssue partnerRef={partnerData.partnerRef} />;
       default:
