@@ -37,15 +37,12 @@ export default function PartnerDashboard({ userId }) {
   const [showViewUpdateCaseData, setShowViewUpdateCaseData] = useState(false);
   const [showRaiseIssue, setShowRaiseIssue] = useState(false);
   const [showCopyPopup, setShowCopyPopup] = useState(false);
-  const [casesCount, setCasesCount] = useState('0');
-  const [totalEarnings, setTotalEarnings] = useState('₹0');
+  const [stats, setStats] = useState({
+    casesReferred: '0',
+    totalEarnings: '₹0',
+    referralCode: '-'
+  });
   const router = useRouter();
-
-  const stats = {
-    casesReferred: casesCount,
-    totalEarnings: totalEarnings,
-    referralCode: partnerData?.partnerRef || '-'
-  };
 
   const handleBack = () => {
     setShowCreateCase(false);
@@ -69,15 +66,17 @@ export default function PartnerDashboard({ userId }) {
           const q = query(usersRef, where('partnerRef', '==', data.partnerRef));
           const querySnapshot = await getDocs(q);
           
-          setCasesCount(querySnapshot.size.toString());
-          
           let totalCommission = 0;
           querySnapshot.forEach((doc) => {
             const userData = doc.data();
             totalCommission += userData.partnerCommision || 0;
           });
-          
-          setTotalEarnings(`₹${totalCommission}`);
+
+          setStats({
+            casesReferred: querySnapshot.size.toString(),
+            totalEarnings: `₹${totalCommission}`,
+            referralCode: data.partnerRef || '-'
+          });
 
         } else {
           setError('Partner data not found');

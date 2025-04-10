@@ -1,11 +1,12 @@
 import { useState, useEffect } from 'react';
-import { db } from '../../lib/firebase';
+import { db, storage } from '../../lib/firebase';
 import { 
   collection, 
   addDoc, 
   doc,
   getDoc
 } from 'firebase/firestore';
+import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { useRouter } from 'next/router';
 
 export default function CreateCase({ partnerRef }) {
@@ -22,10 +23,13 @@ export default function CreateCase({ partnerRef }) {
     aadharNo: '',
     address: ''
   });
+  const [files, setFiles] = useState([]);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
   const [partnerData, setPartnerData] = useState(null);
   const [showSuccessPopup, setShowSuccessPopup] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState(0);
+  const [selectedFileNames, setSelectedFileNames] = useState([]);
 
   useEffect(() => {
     const fetchPartnerData = async () => {
@@ -61,18 +65,53 @@ export default function CreateCase({ partnerRef }) {
     }));
   };
 
+  const handleFileChange = (e) => {
+    const newFiles = Array.from(e.target.files);
+    setFiles(prevFiles => [...prevFiles, ...newFiles]);
+    setSelectedFileNames(prevNames => [...prevNames, ...newFiles.map(file => file.name)]);
+  };
+
+  const removeFile = (index) => {
+    setFiles(prevFiles => prevFiles.filter((_, i) => i !== index));
+    setSelectedFileNames(prevNames => prevNames.filter((_, i) => i !== index));
+  };
+
+  const uploadFiles = async () => {
+    const uploadedUrls = [];
+    let progress = 0;
+    const increment = 100 / files.length;
+
+    for (const file of files) {
+      const storageRef = ref(storage, `case-files/${Date.now()}-${file.name}`);
+      
+      try {
+        const snapshot = await uploadBytes(storageRef, file);
+        const url = await getDownloadURL(snapshot.ref);
+        uploadedUrls.push(url);
+        
+        progress += increment;
+        setUploadProgress(Math.round(progress));
+      } catch (err) {
+        console.error('Error uploading file:', err);
+        throw new Error(`Failed to upload ${file.name}`);
+      }
+    }
+
+    return uploadedUrls;
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
     setError(null);
-
-    // if (!partnerData) {
-    //   setError('Cannot create case: Partner data not found');
-    //   setLoading(false);
-    //   return;
-    // }
+    setUploadProgress(0);
 
     try {
+      let fileUrls = [];
+      if (files.length > 0) {
+        fileUrls = await uploadFiles();
+      }
+
       // Create the user document with default values
       const userDoc = {
         ...formData,
@@ -108,7 +147,8 @@ export default function CreateCase({ partnerRef }) {
         solvedDate: null,
         claim: 0,
         commisionReceived: 0,
-        partnerCommision: 0
+        partnerCommision: 0,
+        fileBucket: fileUrls
       };
 
       // Add the document to Firestore
@@ -127,6 +167,7 @@ export default function CreateCase({ partnerRef }) {
       setError('Failed to create case: ' + err.message);
     } finally {
       setLoading(false);
+      setUploadProgress(0);
     }
   };
 
@@ -311,6 +352,48 @@ export default function CreateCase({ partnerRef }) {
                       placeholder="Enter policy number"
                     />
                   </div>
+                </div>
+
+                <div>
+                  <label htmlFor="files" className="block text-sm font-medium text-gray-700 mb-1">
+                    Upload Documents
+                  </label>
+                  <input
+                    type="file"
+                    id="files"
+                    multiple
+                    onChange={handleFileChange}
+                    className="block w-full px-3 sm:px-4 py-2 sm:py-3 rounded-lg border border-gray-300 text-sm sm:text-base"
+                  />
+                  {selectedFileNames.length > 0 && (
+                    <div className="mt-2 space-y-2">
+                      {selectedFileNames.map((fileName, index) => (
+                        <div key={index} className="flex items-center justify-between bg-gray-50 p-2 rounded">
+                          <span className="text-sm text-gray-600 truncate">{fileName}</span>
+                          <button
+                            type="button"
+                            onClick={() => removeFile(index)}
+                            className="text-red-500 hover:text-red-700"
+                          >
+                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
+                            </svg>
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                  {uploadProgress > 0 && uploadProgress < 100 && (
+                    <div className="mt-2">
+                      <div className="bg-blue-100 rounded-full h-2">
+                        <div 
+                          className="bg-blue-500 h-2 rounded-full transition-all duration-300"
+                          style={{ width: `${uploadProgress}%` }}
+                        ></div>
+                      </div>
+                      <p className="text-sm text-gray-600 mt-1">Uploading: {uploadProgress}%</p>
+                    </div>
+                  )}
                 </div>
               </div>
             </div>

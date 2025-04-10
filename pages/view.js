@@ -61,7 +61,7 @@ export default function View({ userId }) {
 
     switch (view) {
       case 'create-case':
-        return <CreateCase partnerRef={userId} />;
+        return <CreateCase partnerRef={partnerData.partnerRef} />;
       case 'view-case-status':
         return <ViewCaseStatus partnerRef={partnerData.partnerRef} />;
       case 'update-case-data':
