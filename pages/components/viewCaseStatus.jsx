@@ -6,6 +6,7 @@ export default function ViewCaseStatus({ partnerRef }) {
   const [cases, setCases] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [expandedLogs, setExpandedLogs] = useState({});
 
   useEffect(() => {
     if (!partnerRef) {
@@ -62,6 +63,32 @@ export default function ViewCaseStatus({ partnerRef }) {
       default:
         return 'bg-gray-100 text-gray-800';
     }
+  };
+
+  const toggleLogs = (caseId) => {
+    setExpandedLogs(prev => ({
+      ...prev,
+      [caseId]: !prev[caseId]
+    }));
+  };
+
+  const renderLogs = (logs, caseId) => {
+    if (!logs || logs.length === 0) return null;
+
+    const sortedLogs = [...logs].sort((a, b) => 
+      new Date(b.date) - new Date(a.date)
+    );
+
+    return (
+      <div className="space-y-2">
+        {(expandedLogs[caseId] ? sortedLogs : [sortedLogs[0]]).map((log, index) => (
+          <div key={index} className="flex items-start space-x-2 text-sm">
+            <span className="text-gray-500">{formatDate(log.date)}:</span>
+            <span className="text-gray-700">{log.remark}</span>
+          </div>
+        ))}
+      </div>
+    );
   };
 
   if (loading) {
@@ -126,39 +153,61 @@ export default function ViewCaseStatus({ partnerRef }) {
                     </thead>
                     <tbody className="divide-y divide-gray-100">
                       {cases.map((caseItem) => (
-                        <tr key={caseItem.id} className="hover:bg-gray-50 transition-colors duration-200">
-                          <td className="px-4 sm:px-6 py-4 whitespace-nowrap">
-                            <div className="text-sm font-medium text-gray-900">{caseItem.name || 'N/A'}</div>
-                          </td>
-                          <td className="px-4 sm:px-6 py-4 whitespace-nowrap hidden sm:table-cell">
-                            <div className="text-sm text-gray-500">{caseItem.mobile || 'N/A'}</div>
-                          </td>
-                          <td className="px-4 sm:px-6 py-4 whitespace-nowrap">
-                            <span className={`px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full ${getStatusBadgeColor(caseItem.reviewStatus)}`}>
-                              {caseItem.status || 'Pending'}
-                            </span>
-                          </td>
-                          <td className="px-4 sm:px-6 py-4 whitespace-nowrap hidden md:table-cell">
-                            <span className={`px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full ${caseItem.documentShort ? 'bg-red-100 text-red-800' : 'bg-green-100 text-green-800'}`}>
-                              {caseItem.documentShort ? 'Incomplete' : 'Complete'}
-                            </span>
-                          </td>
-                          <td className="px-4 sm:px-6 py-4 whitespace-nowrap hidden lg:table-cell">
-                            <div className="text-sm text-gray-500 max-w-xs truncate">
-                              {caseItem.caseRejectionReason || 'N/A'}
-                            </div>
-                          </td>
-                          <td className="px-4 sm:px-6 py-4 whitespace-nowrap hidden lg:table-cell">
-                            <div className="text-sm text-gray-500">
-                              {formatDate(caseItem.caseAcceptanceDate)}
-                            </div>
-                          </td>
-                          <td className="px-4 sm:px-6 py-4 whitespace-nowrap">
-                            <span className={`px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full ${caseItem.solved ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'}`}>
-                              {caseItem.solved ? 'Solved' : 'In Progress'}
-                            </span>
-                          </td>
-                        </tr>
+                        <>
+                          <tr key={caseItem.id} className="hover:bg-gray-50 transition-colors duration-200">
+                            <td className="px-4 sm:px-6 py-4 whitespace-nowrap">
+                              <div className="text-sm font-medium text-gray-900">{caseItem.name || 'N/A'}</div>
+                            </td>
+                            <td className="px-4 sm:px-6 py-4 whitespace-nowrap hidden sm:table-cell">
+                              <div className="text-sm text-gray-500">{caseItem.mobile || 'N/A'}</div>
+                            </td>
+                            <td className="px-4 sm:px-6 py-4 whitespace-nowrap">
+                              <span className={`px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full ${getStatusBadgeColor(caseItem.reviewStatus)}`}>
+                                {caseItem.status || 'Pending'}
+                              </span>
+                            </td>
+                            <td className="px-4 sm:px-6 py-4 whitespace-nowrap hidden md:table-cell">
+                              <span className={`px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full ${caseItem.documentShort ? 'bg-red-100 text-red-800' : 'bg-green-100 text-green-800'}`}>
+                                {caseItem.documentShort ? 'Incomplete' : 'Complete'}
+                              </span>
+                            </td>
+                            <td className="px-4 sm:px-6 py-4 whitespace-nowrap hidden lg:table-cell">
+                              <div className="text-sm text-gray-500 max-w-xs truncate">
+                                {caseItem.caseRejectionReason || 'N/A'}
+                              </div>
+                            </td>
+                            <td className="px-4 sm:px-6 py-4 whitespace-nowrap hidden lg:table-cell">
+                              <div className="text-sm text-gray-500">
+                                {formatDate(caseItem.caseAcceptanceDate)}
+                              </div>
+                            </td>
+                            <td className="px-4 sm:px-6 py-4 whitespace-nowrap">
+                              <span className={`px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full ${caseItem.solved ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'}`}>
+                                {caseItem.solved ? 'Solved' : 'In Progress'}
+                              </span>
+                            </td>
+                          </tr>
+                          {caseItem.mainLogs && caseItem.mainLogs.length > 0 && (
+                            <tr>
+                              <td colSpan="7" className="px-4 sm:px-6 py-4">
+                                <div className="bg-gray-50 p-4 rounded-lg">
+                                  <div className="flex justify-between items-center mb-2">
+                                    <h4 className="text-sm font-semibold text-gray-700">Latest Update</h4>
+                                    {caseItem.mainLogs.length > 1 && (
+                                      <button
+                                        onClick={() => toggleLogs(caseItem.id)}
+                                        className="text-sm text-blue-600 hover:text-blue-800"
+                                      >
+                                        {expandedLogs[caseItem.id] ? 'Show Less' : 'View All'}
+                                      </button>
+                                    )}
+                                  </div>
+                                  {renderLogs(caseItem.mainLogs, caseItem.id)}
+                                </div>
+                              </td>
+                            </tr>
+                          )}
+                        </>
                       ))}
                     </tbody>
                   </table>

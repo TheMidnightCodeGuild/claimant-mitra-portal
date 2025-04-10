@@ -1,6 +1,7 @@
 import { useState } from 'react';
-import { db } from '../../lib/firebase';
+import { db, storage } from '../../lib/firebase';
 import { collection, addDoc } from 'firebase/firestore';
+import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { useRouter } from 'next/router';
 import Image from 'next/image';
 
@@ -8,10 +9,11 @@ export default function Join() {
   const router = useRouter();
   const [formData, setFormData] = useState({
     name: '',
-    email: '', 
+    email: '',
     mobile: '',
     source: ''
   });
+  const [files, setFiles] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState(false);
@@ -24,6 +26,21 @@ export default function Join() {
     }));
   };
 
+  const handleFileChange = (e) => {
+    const selectedFiles = Array.from(e.target.files);
+    setFiles(selectedFiles);
+  };
+
+  const uploadFiles = async () => {
+    const uploadPromises = files.map(async (file) => {
+      const storageRef = ref(storage, `partner-documents/${Date.now()}-${file.name}`);
+      await uploadBytes(storageRef, file);
+      return getDownloadURL(storageRef);
+    });
+
+    return Promise.all(uploadPromises);
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
@@ -34,12 +51,18 @@ export default function Join() {
         throw new Error('Please enter a valid 10-digit mobile number');
       }
 
+      let fileBucket = [];
+      if (files.length > 0) {
+        fileBucket = await uploadFiles();
+      }
+
       const docData = {
         ...formData,
         mobile: formData.mobile ? Number(formData.mobile) : null,
         requestDate: new Date().toISOString(),
         status: 'pending',
-        reviewed: false
+        reviewed: false,
+        fileBucket
       };
 
       await addDoc(collection(db, 'requests'), docData);
@@ -170,6 +193,18 @@ export default function Join() {
                   placeholder="Enter your city/location"
                   className="block w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                 />
+              </div>
+
+              <div>
+                <label htmlFor="documents" className="block text-xs sm:text-sm font-medium text-gray-700 mb-1">Upload Documents</label>
+                <input
+                  type="file"
+                  id="documents"
+                  multiple
+                  onChange={handleFileChange}
+                  className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-medium file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
+                />
+                <p className="mt-1 text-xs text-gray-500">You can upload multiple documents</p>
               </div>
 
               {error && (
