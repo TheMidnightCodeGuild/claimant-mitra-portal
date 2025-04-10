@@ -94,25 +94,20 @@ export default function PartnerDashboard({ userId }) {
   }, [userId]);
 
   const handleActionClick = (action) => {
-    switch(action) {
+    switch (action) {
       case 'Create Case':
-        setShowCreateCase(true);
+        router.push('/view?view=create-case');
         break;
       case 'View Case Status':
-        setShowViewCaseStatus(true);
-        break;
-      case 'Update Case Data':
-        setShowViewUpdateCaseData(true);
+        router.push('/view?view=view-case-status');
         break;
       case 'Raise Issue':
-        setShowRaiseIssue(true);
+        router.push('/view?view=raise-issue');
         break;
       default:
         console.log(`Clicked ${action}`);
     }
   };
-
- 
 
   const BackButton = () => (
     <button
@@ -125,42 +120,6 @@ export default function PartnerDashboard({ userId }) {
       Back to Dashboard
     </button>
   );
-
-  if (showCreateCase) {
-    
-
-    return(<div>
-      <BackButton />
-      <CreateCase partnerRef={partnerData?.partnerRef} />;
-    </div>) 
-  }
-
-  if (showViewCaseStatus && partnerData) {
-    return (
-      <div>
-        <BackButton />
-        <ViewCaseStatus partnerRef={partnerData.partnerRef} />
-      </div>
-    );
-  }
-
-  // if (showViewUpdateCaseData && partnerData) {
-  //   return (
-  //     <div>
-  //       <BackButton />
-  //       <ViewUpdateCaseData partnerRef={partnerData.partnerRef} />
-  //     </div>
-  //   );
-  // }
-
-  if (showRaiseIssue && partnerData) {
-    return (
-      <div>
-        <BackButton />
-        <RaiseIssue partnerRef={partnerData.partnerRef} />
-      </div>
-    );
-  }
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-50 to-gray-100">

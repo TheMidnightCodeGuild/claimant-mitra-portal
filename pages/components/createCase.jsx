@@ -17,7 +17,10 @@ export default function CreateCase({ partnerRef }) {
     email: '',
     companyName: '',
     claimNo: '',
-    policyNo: ''
+    policyNo: '',
+    policyHolder: '',
+    aadharNo: '',
+    address: ''
   });
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -169,6 +172,21 @@ export default function CreateCase({ partnerRef }) {
                 </div>
 
                 <div>
+                  <label htmlFor="policyHolder" className="block text-sm font-medium text-gray-700 mb-1">
+                    Policy Holder Name
+                  </label>
+                  <input
+                    type="text"
+                    name="policyHolder"
+                    id="policyHolder"
+                    value={formData.policyHolder}
+                    onChange={handleChange}
+                    className="block w-full px-3 sm:px-4 py-2 sm:py-3 rounded-lg border-gray-300 shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200 text-sm sm:text-base"
+                    placeholder="Enter policy holder's name"
+                  />
+                </div>
+
+                <div>
                   <label htmlFor="mobile" className="block text-sm font-medium text-gray-700 mb-1">
                     Mobile Number
                   </label>
@@ -195,6 +213,36 @@ export default function CreateCase({ partnerRef }) {
                     onChange={handleChange}
                     className="block w-full px-3 sm:px-4 py-2 sm:py-3 rounded-lg border-gray-300 shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200 text-sm sm:text-base"
                     placeholder="Enter email address"
+                  />
+                </div>
+
+                <div>
+                  <label htmlFor="aadharNo" className="block text-sm font-medium text-gray-700 mb-1">
+                    Aadhar Number
+                  </label>
+                  <input
+                    type="text"
+                    name="aadharNo"
+                    id="aadharNo"
+                    value={formData.aadharNo}
+                    onChange={handleChange}
+                    className="block w-full px-3 sm:px-4 py-2 sm:py-3 rounded-lg border-gray-300 shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200 text-sm sm:text-base"
+                    placeholder="Enter Aadhar number"
+                  />
+                </div>
+
+                <div>
+                  <label htmlFor="address" className="block text-sm font-medium text-gray-700 mb-1">
+                    Address
+                  </label>
+                  <textarea
+                    name="address"
+                    id="address"
+                    value={formData.address}
+                    onChange={handleChange}
+                    rows="3"
+                    className="block w-full px-3 sm:px-4 py-2 sm:py-3 rounded-lg border-gray-300 shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200 text-sm sm:text-base"
+                    placeholder="Enter full address"
                   />
                 </div>
               </div>
