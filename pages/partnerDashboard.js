@@ -51,6 +51,13 @@ export default function PartnerDashboard({ userId }) {
     setShowRaiseIssue(false);
   };
 
+  const handleLogout = () => {
+    // Delete the session cookie
+    document.cookie = "session=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+    // Redirect to home page
+    router.push('/');
+  };
+
   useEffect(() => {
     const fetchPartnerData = async () => {
       try {
@@ -124,16 +131,28 @@ export default function PartnerDashboard({ userId }) {
     <div className="min-h-screen bg-gradient-to-b from-gray-50 to-gray-100">
       {/* Header Section */}
       <div className="p-4 sm:p-8 bg-white shadow-sm">
-        <div className="max-w-7xl mx-auto px-2 sm:px-0 flex items-center">
-          <div className="mr-4">
-          <Image src="/images/logo.png" width={100} height={100} alt="Logo" className="mx-auto h-16 sm:h-20 w-auto" />
+        <div className="max-w-7xl mx-auto px-2 sm:px-0 flex items-center justify-between">
+          <div className="flex items-center">
+            <div className="mr-4">
+              <Image src="/images/logo.png" width={100} height={100} alt="Logo" className="mx-auto h-16 sm:h-20 w-auto" />
+            </div>
+            <div>
+              <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">
+                {partnerData ? `Welcome, ${partnerData.email}` : 'Partner Dashboard'}
+              </h2>
+              <p className="text-sm sm:text-base text-gray-600">Manage your cases and track performance</p>
+            </div>
           </div>
-          <div>
-            <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2 mx-44">
-              {partnerData ? `Welcome, ${partnerData.email}` : 'Partner Dashboard'}
-            </h2>
-            <p className="text-sm sm:text-base text-gray-600 mx-60">Manage your cases and track performance</p>
-          </div>
+          <button
+            onClick={handleLogout}
+            className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg transition duration-200 flex items-center gap-2"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+              <path fillRule="evenodd" d="M3 3a1 1 0 00-1 1v12a1 1 0 001 1h12a1 1 0 001-1V4a1 1 0 00-1-1H3zm11 4a1 1 0 10-2 0v4a1 1 0 102 0V7z" clipRule="evenodd" />
+              <path d="M7 7a1 1 0 011-1h4a1 1 0 110 2H8a1 1 0 01-1-1z" />
+            </svg>
+            Logout
+          </button>
           {error && (
             <div className="mt-4 p-3 sm:p-4 bg-red-50 rounded-lg border border-red-200">
               <p className="text-sm sm:text-base text-red-600">{error}</p>
