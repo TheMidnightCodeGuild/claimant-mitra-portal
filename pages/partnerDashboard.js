@@ -4,6 +4,7 @@ import { db } from '../lib/firebase';
 import { doc, getDoc, collection, query, where, getDocs } from 'firebase/firestore';
 import dynamic from 'next/dynamic';
 import Image from 'next/image';
+import { getAuth, sendPasswordResetEmail } from 'firebase/auth';
 
 const CreateCase = dynamic(() => import('./components/createCase'));
 const ViewCaseStatus = dynamic(() => import('./components/viewCaseStatus'));
@@ -37,6 +38,7 @@ export default function PartnerDashboard({ userId }) {
   const [showViewUpdateCaseData, setShowViewUpdateCaseData] = useState(false);
   const [showRaiseIssue, setShowRaiseIssue] = useState(false);
   const [showCopyPopup, setShowCopyPopup] = useState(false);
+  const [passwordResetLoading, setPasswordResetLoading] = useState(false);
   const [stats, setStats] = useState({
     casesReferred: '0',
     totalEarnings: '₹0',
@@ -56,6 +58,25 @@ export default function PartnerDashboard({ userId }) {
     document.cookie = "session=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
     // Redirect to home page
     router.push('/');
+  };
+
+  const handlePasswordReset = async (email) => {
+    if (!email) {
+      alert('Partner has no email address');
+      return;
+    }
+
+    try {
+      setPasswordResetLoading(true);
+      const auth = getAuth();
+      await sendPasswordResetEmail(auth, email);
+      alert(`Password reset email sent to ${email}`);
+    } catch (err) {
+      console.error('Error sending password reset:', err);
+      alert(`Failed to send password reset: ${err.message}`);
+    } finally {
+      setPasswordResetLoading(false);
+    }
   };
 
   useEffect(() => {
@@ -143,16 +164,34 @@ export default function PartnerDashboard({ userId }) {
               <p className="text-sm sm:text-base text-gray-600">Manage your cases and track performance</p>
             </div>
           </div>
-          <button
-            onClick={handleLogout}
-            className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg transition duration-200 flex items-center gap-2"
-          >
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-              <path fillRule="evenodd" d="M3 3a1 1 0 00-1 1v12a1 1 0 001 1h12a1 1 0 001-1V4a1 1 0 00-1-1H3zm11 4a1 1 0 10-2 0v4a1 1 0 102 0V7z" clipRule="evenodd" />
-              <path d="M7 7a1 1 0 011-1h4a1 1 0 110 2H8a1 1 0 01-1-1z" />
-            </svg>
-            Logout
-          </button>
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => partnerData && handlePasswordReset(partnerData.email)}
+              disabled={passwordResetLoading || !partnerData}
+              className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition duration-200 flex items-center gap-2 mr-2"
+            >
+              {passwordResetLoading ? (
+                <span>Sending...</span>
+              ) : (
+                <>
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                    <path fillRule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clipRule="evenodd" />
+                  </svg>
+                  Reset Password
+                </>
+              )}
+            </button>
+            <button
+              onClick={handleLogout}
+              className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg transition duration-200 flex items-center gap-2"
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                <path fillRule="evenodd" d="M3 3a1 1 0 00-1 1v12a1 1 0 001 1h12a1 1 0 001-1V4a1 1 0 00-1-1H3zm11 4a1 1 0 10-2 0v4a1 1 0 102 0V7z" clipRule="evenodd" />
+                <path d="M7 7a1 1 0 011-1h4a1 1 0 110 2H8a1 1 0 01-1-1z" />
+              </svg>
+              Logout
+            </button>
+          </div>
           {error && (
             <div className="mt-4 p-3 sm:p-4 bg-red-50 rounded-lg border border-red-200">
               <p className="text-sm sm:text-base text-red-600">{error}</p>
