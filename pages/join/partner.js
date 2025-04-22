@@ -144,7 +144,6 @@ export default function Join() {
                   name="name"
                   id="name"
                   placeholder="Enter your full name"
-                  required
                   value={formData.name}
                   onChange={handleChange}
                   className="block w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
@@ -158,7 +157,6 @@ export default function Join() {
                   name="email"
                   id="email"
                   placeholder="Enter your email address"
-                  required
                   value={formData.email}
                   onChange={handleChange}
                   className="block w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
@@ -171,7 +169,6 @@ export default function Join() {
                   type="tel"
                   name="mobile"
                   id="mobile"
-                  required
                   value={formData.mobile}
                   onChange={handleChange}
                   pattern="[0-9]{10}"
@@ -187,7 +184,6 @@ export default function Join() {
                   type="text"
                   name="source"
                   id="source"
-                  required
                   value={formData.source}
                   onChange={handleChange}
                   placeholder="Enter your city/location"
