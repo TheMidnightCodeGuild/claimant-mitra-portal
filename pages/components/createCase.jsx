@@ -126,6 +126,8 @@ export default function CreateCase({ partnerRef }) {
         caseRejectionReason: '',
         caseRejectionDate: null,
         rejected: false,
+        inReimbursement: false,
+        isPending: false,
         caseAcceptanceDate: null,
         mainLogs: [],
         internalLogs: [],
