@@ -1,14 +1,9 @@
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import { db } from '../lib/firebase';
-import { doc, getDoc, collection, query, where, getDocs } from 'firebase/firestore';
-import dynamic from 'next/dynamic';
+import { doc, getDoc, collection, query, where, getDocs, documentId } from 'firebase/firestore';
 import Image from 'next/image';
 import { getAuth, sendPasswordResetEmail } from 'firebase/auth';
-
-const CreateCase = dynamic(() => import('./components/createCase'));
-const ViewCaseStatus = dynamic(() => import('./components/viewCaseStatus'));
-const RaiseIssue = dynamic(() => import('./components/raiseIssue'));
 
 export async function getServerSideProps(context) {
   const { req } = context;
@@ -33,12 +28,16 @@ export async function getServerSideProps(context) {
 export default function PartnerDashboard({ userId }) {
   const [partnerData, setPartnerData] = useState(null);
   const [error, setError] = useState(null);
-  const [showCreateCase, setShowCreateCase] = useState(false);
-  const [showViewCaseStatus, setShowViewCaseStatus] = useState(false);
-  const [showViewUpdateCaseData, setShowViewUpdateCaseData] = useState(false);
-  const [showRaiseIssue, setShowRaiseIssue] = useState(false);
   const [showCopyPopup, setShowCopyPopup] = useState(false);
   const [passwordResetLoading, setPasswordResetLoading] = useState(false);
+  const [childPartnersById, setChildPartnersById] = useState({});
+  const [childLoadingById, setChildLoadingById] = useState({});
+  const [childErrorById, setChildErrorById] = useState({});
+  const [expandedChildrenById, setExpandedChildrenById] = useState({});
+  const [showCasesById, setShowCasesById] = useState({});
+  const [casesById, setCasesById] = useState({});
+  const [casesLoadingById, setCasesLoadingById] = useState({});
+  const [casesErrorById, setCasesErrorById] = useState({});
   const [stats, setStats] = useState({
     casesReferred: '0',
     totalEarnings: '₹0',
@@ -46,19 +45,273 @@ export default function PartnerDashboard({ userId }) {
   });
   const router = useRouter();
 
-  const handleBack = () => {
-    setShowCreateCase(false);
-    setShowViewCaseStatus(false);
-    setShowViewUpdateCaseData(false);
-    setShowRaiseIssue(false);
-  };
-
   const handleLogout = () => {
     // Delete the session cookie
     document.cookie = "session=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
     // Redirect to home page
     router.push('/');
   };
+
+  const getPartnerType = (partner) => (partner?.partnerType === 'super' ? 'super' : 'normal');
+
+  const chunkArray = (arr, chunkSize) => {
+    const chunks = [];
+    for (let i = 0; i < arr.length; i += chunkSize) {
+      chunks.push(arr.slice(i, i + chunkSize));
+    }
+    return chunks;
+  };
+
+  const fetchPartnersByIds = async (ids) => {
+    if (!Array.isArray(ids) || ids.length === 0) {
+      return [];
+    }
+
+    const uniqueIds = [...new Set(ids.filter(Boolean))];
+    const partnersCollection = collection(db, 'partners');
+    const fetchedPartners = [];
+    const idChunks = chunkArray(uniqueIds, 10);
+
+    for (const idsChunk of idChunks) {
+      const partnersQuery = query(partnersCollection, where(documentId(), 'in', idsChunk));
+      const snapshot = await getDocs(partnersQuery);
+      snapshot.forEach((partnerDoc) => {
+        fetchedPartners.push({
+          id: partnerDoc.id,
+          ...partnerDoc.data(),
+        });
+      });
+    }
+
+    return fetchedPartners;
+  };
+
+  const fetchPartnersBySuperPartner = async (superPartnerId) => {
+    if (!superPartnerId) {
+      return [];
+    }
+
+    const partnersCollection = collection(db, 'partners');
+    const partnersQuery = query(partnersCollection, where('superPartner', '==', superPartnerId));
+    const snapshot = await getDocs(partnersQuery);
+
+    return snapshot.docs.map((partnerDoc) => ({
+      id: partnerDoc.id,
+      ...partnerDoc.data(),
+    }));
+  };
+
+  const fetchCasesForPartner = async (partnerId, partnerRef) => {
+    if (!partnerRef) {
+      setCasesById((prev) => ({ ...prev, [partnerId]: [] }));
+      return;
+    }
+
+    setCasesLoadingById((prev) => ({ ...prev, [partnerId]: true }));
+    setCasesErrorById((prev) => ({ ...prev, [partnerId]: '' }));
+
+    try {
+      const usersRef = collection(db, 'users');
+      const q = query(usersRef, where('partnerRef', '==', partnerRef));
+      const querySnapshot = await getDocs(q);
+      const partnerCases = querySnapshot.docs.map((caseDoc) => ({
+        id: caseDoc.id,
+        ...caseDoc.data(),
+      }));
+      setCasesById((prev) => ({ ...prev, [partnerId]: partnerCases }));
+    } catch (err) {
+      console.error('Error fetching partner cases:', err);
+      setCasesErrorById((prev) => ({ ...prev, [partnerId]: 'Failed to load partner cases' }));
+    } finally {
+      setCasesLoadingById((prev) => ({ ...prev, [partnerId]: false }));
+    }
+  };
+
+  const toggleCasesForPartner = async (partner) => {
+    const partnerId = partner?.id;
+    if (!partnerId) {
+      return;
+    }
+
+    const shouldShow = !showCasesById[partnerId];
+    setShowCasesById((prev) => ({ ...prev, [partnerId]: shouldShow }));
+
+    if (shouldShow && !casesById[partnerId] && !casesLoadingById[partnerId]) {
+      await fetchCasesForPartner(partnerId, partner.partnerRef);
+    }
+  };
+
+  const toggleChildrenForPartner = async (partner) => {
+    const partnerId = partner?.id;
+    if (!partnerId) {
+      return;
+    }
+
+    const isExpanded = expandedChildrenById[partnerId];
+    if (isExpanded) {
+      setExpandedChildrenById((prev) => ({ ...prev, [partnerId]: false }));
+      return;
+    }
+
+    setExpandedChildrenById((prev) => ({ ...prev, [partnerId]: true }));
+
+    if (childPartnersById[partnerId]) {
+      return;
+    }
+
+    setChildLoadingById((prev) => ({ ...prev, [partnerId]: true }));
+    setChildErrorById((prev) => ({ ...prev, [partnerId]: '' }));
+
+    try {
+      const childIds = Array.isArray(partner.partnersUnder) ? partner.partnersUnder : [];
+      let childPartners = [];
+
+      if (childIds.length > 0) {
+        childPartners = await fetchPartnersByIds(childIds);
+      } else {
+        childPartners = await fetchPartnersBySuperPartner(partnerId);
+      }
+
+      setChildPartnersById((prev) => ({ ...prev, [partnerId]: childPartners }));
+    } catch (err) {
+      console.error('Error fetching child partners:', err);
+      setChildErrorById((prev) => ({ ...prev, [partnerId]: 'Failed to load partners under this partner' }));
+      setChildPartnersById((prev) => ({ ...prev, [partnerId]: [] }));
+    } finally {
+      setChildLoadingById((prev) => ({ ...prev, [partnerId]: false }));
+    }
+  };
+
+  const formatDate = (dateString) => {
+    if (!dateString) return '-';
+    return new Date(dateString).toLocaleDateString('en-IN', {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric',
+    });
+  };
+
+  const getStatusBadgeColor = (status) => {
+    switch (status) {
+      case 'approved':
+        return 'bg-green-100 text-green-800';
+      case 'rejected':
+        return 'bg-red-100 text-red-800';
+      default:
+        return 'bg-yellow-100 text-yellow-800';
+    }
+  };
+
+  const PartnerCasesTable = ({ partner }) => {
+    const partnerCases = casesById[partner.id] || [];
+    const loading = casesLoadingById[partner.id];
+    const casesError = casesErrorById[partner.id];
+
+    if (loading) {
+      return <p className="text-sm text-gray-500 mt-3">Loading cases...</p>;
+    }
+
+    if (casesError) {
+      return <p className="text-sm text-red-600 mt-3">{casesError}</p>;
+    }
+
+    if (partnerCases.length === 0) {
+      return <p className="text-sm text-gray-500 mt-3">No cases found for this partner.</p>;
+    }
+
+    return (
+      <div className="mt-3 overflow-x-auto border border-gray-200 rounded-lg">
+        <table className="min-w-full divide-y divide-gray-200">
+          <thead className="bg-gray-50">
+            <tr>
+              <th className="px-3 py-2 text-left text-xs font-semibold text-gray-600">Name</th>
+              <th className="px-3 py-2 text-left text-xs font-semibold text-gray-600">Mobile</th>
+              <th className="px-3 py-2 text-left text-xs font-semibold text-gray-600">Status</th>
+              <th className="px-3 py-2 text-left text-xs font-semibold text-gray-600">Case Accepted</th>
+            </tr>
+          </thead>
+          <tbody className="bg-white divide-y divide-gray-100">
+            {partnerCases.map((partnerCase) => (
+              <tr key={partnerCase.id}>
+                <td className="px-3 py-2 text-sm text-gray-700">{partnerCase.name || '-'}</td>
+                <td className="px-3 py-2 text-sm text-gray-700">{partnerCase.mobile || '-'}</td>
+                <td className="px-3 py-2">
+                  <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${getStatusBadgeColor(partnerCase.reviewStatus)}`}>
+                    {partnerCase.status || 'Pending'}
+                  </span>
+                </td>
+                <td className="px-3 py-2 text-sm text-gray-700">{formatDate(partnerCase.caseAcceptanceDate)}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    );
+  };
+
+  const PartnerNode = ({ partner, depth = 0 }) => {
+    const isSuperPartner = getPartnerType(partner) === 'super';
+    const isChildrenExpanded = !!expandedChildrenById[partner.id];
+    const isCasesShown = !!showCasesById[partner.id];
+    const childPartners = childPartnersById[partner.id] || [];
+    const childLoading = !!childLoadingById[partner.id];
+    const childError = childErrorById[partner.id];
+
+    return (
+      <div
+        className="mt-3 border border-gray-200 rounded-lg p-3 bg-white"
+        style={{ marginLeft: depth === 0 ? 0 : `${depth * 16}px` }}
+      >
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+          <div>
+            <p className="text-sm font-semibold text-gray-900">
+              {partner.name || partner.email || partner.partnerRef || partner.id}
+            </p>
+            <p className="text-xs text-gray-600">
+              Type: {isSuperPartner ? 'Super Partner' : 'Partner'} | Ref: {partner.partnerRef || '-'}
+            </p>
+          </div>
+          <div className="flex flex-wrap gap-2">
+            <button
+              onClick={() => toggleCasesForPartner(partner)}
+              className="px-3 py-1.5 text-xs font-medium rounded-md bg-blue-600 text-white hover:bg-blue-700 transition duration-200"
+            >
+              {isCasesShown ? 'Hide Cases' : 'Show Cases'}
+            </button>
+            {isSuperPartner && (
+              <button
+                onClick={() => toggleChildrenForPartner(partner)}
+                className="px-3 py-1.5 text-xs font-medium rounded-md bg-purple-600 text-white hover:bg-purple-700 transition duration-200"
+              >
+                {isChildrenExpanded ? 'Hide Partners Under' : 'Show Partners Under'}
+              </button>
+            )}
+          </div>
+        </div>
+
+        {isCasesShown && <PartnerCasesTable partner={partner} />}
+
+        {isChildrenExpanded && (
+          <div className="mt-3">
+            {childLoading && <p className="text-sm text-gray-500">Loading partners...</p>}
+            {!childLoading && childError && <p className="text-sm text-red-600">{childError}</p>}
+            {!childLoading && !childError && childPartners.length === 0 && (
+              <p className="text-sm text-gray-500">No partners found under this partner.</p>
+            )}
+            {!childLoading && !childError && childPartners.length > 0 && (
+              <div>
+                {childPartners.map((childPartner) => (
+                  <PartnerNode key={childPartner.id} partner={childPartner} depth={depth + 1} />
+                ))}
+              </div>
+            )}
+          </div>
+        )}
+      </div>
+    );
+  };
+
+  const showRootPartners = !!expandedChildrenById[userId];
 
   const handlePasswordReset = async (email) => {
     if (!email) {
@@ -135,18 +388,6 @@ export default function PartnerDashboard({ userId }) {
         console.log(`Clicked ${action}`);
     }
   };
-
-  const BackButton = () => (
-    <button
-      onClick={handleBack}
-      className="m-2 sm:m-4 px-4 sm:px-6 py-2 text-xs sm:text-sm font-medium text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-lg transition duration-200 ease-in-out flex items-center gap-2"
-    >
-      <svg xmlns="http://www.w3.org/2000/svg" className="h-3 w-3 sm:h-4 sm:w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
-      </svg>
-      Back to Dashboard
-    </button>
-  );
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-50 to-gray-100">
@@ -306,6 +547,45 @@ export default function PartnerDashboard({ userId }) {
           </div> */}
         </div>
       </div>
+
+      {getPartnerType(partnerData) === 'super' && (
+        <div className="max-w-7xl mx-auto px-4 sm:px-8 pb-8">
+          <div className="bg-white rounded-xl shadow-lg p-4 sm:p-6 border border-gray-100">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+              <div>
+                <h3 className="text-lg sm:text-2xl font-semibold text-gray-800">Super Partner Hierarchy</h3>
+                <p className="text-sm text-gray-600">Explore partners under your network and view their cases.</p>
+              </div>
+              <button
+                onClick={() => toggleChildrenForPartner({ id: userId, ...partnerData })}
+                className="px-4 py-2 text-sm font-medium rounded-lg bg-purple-600 text-white hover:bg-purple-700 transition duration-200"
+              >
+                {showRootPartners ? 'Hide Partners Under' : 'Show Partners Under'}
+              </button>
+            </div>
+
+            {showRootPartners && (
+              <div className="mt-4">
+                {childLoadingById[userId] && <p className="text-sm text-gray-500">Loading partners...</p>}
+                {!childLoadingById[userId] && childErrorById[userId] && (
+                  <p className="text-sm text-red-600">{childErrorById[userId]}</p>
+                )}
+                {!childLoadingById[userId] &&
+                  !childErrorById[userId] &&
+                  (childPartnersById[userId] || []).length === 0 && (
+                    <p className="text-sm text-gray-500">No partners found under you.</p>
+                  )}
+                {!childLoadingById[userId] &&
+                  !childErrorById[userId] &&
+                  (childPartnersById[userId] || []).length > 0 &&
+                  childPartnersById[userId].map((partner) => (
+                    <PartnerNode key={partner.id} partner={partner} depth={0} />
+                  ))}
+              </div>
+            )}
+          </div>
+        </div>
+      )}
     </div>
   );
 }
