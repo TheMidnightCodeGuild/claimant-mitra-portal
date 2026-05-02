@@ -41,7 +41,7 @@ export default function Home() {
         <div className="text-center">
           <Image src="/images/logo.png" width={100} height={100} alt="Logo" className="mx-auto h-16 sm:h-20 w-auto" />
           <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">Welcome Partner</h2>
-          <p className="text-sm sm:text-base text-gray-600">Please sign in to continue</p>
+          <p className="text-sm sm:text-base text-gray-600">Please Sign In To Continue</p>
         </div>
         <form className="mt-6 sm:mt-8 space-y-4 sm:space-y-6" onSubmit={handleSubmit}>
           <div className="space-y-4 sm:space-y-5">
