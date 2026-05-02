@@ -384,6 +384,9 @@ export default function PartnerDashboard({ userId }) {
       case 'Raise Issue':
         router.push('/view?view=raise-issue');
         break;
+      case 'KPI Dashboard':
+        router.push('/view?view=kpi');
+        break;
       default:
         console.log(`Clicked ${action}`);
     }
@@ -530,6 +533,20 @@ export default function PartnerDashboard({ userId }) {
             </div>
             <h3 className="text-lg sm:text-xl font-semibold text-gray-900 mb-1 sm:mb-2">Raise Issue</h3>
             <p className="text-sm sm:text-base text-gray-600">Report problems or raise concerns</p>
+          </div>
+
+          {/* KPI Dashboard Card */}
+          <div
+            onClick={() => handleActionClick('KPI Dashboard')}
+            className="bg-white rounded-xl shadow-lg p-4 sm:p-6 cursor-pointer transform transition-all duration-200 hover:scale-105 hover:shadow-xl border border-gray-100"
+          >
+            <div className="text-indigo-600 mb-3 sm:mb-4 bg-indigo-50 p-2 sm:p-3 rounded-lg inline-block">
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 sm:h-8 sm:w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+              </svg>
+            </div>
+            <h3 className="text-lg sm:text-xl font-semibold text-gray-900 mb-1 sm:mb-2">KPI Dashboard</h3>
+            <p className="text-sm sm:text-base text-gray-600">Cases, pipeline, financials, and support metrics</p>
           </div>
 
           {/* Update Case Data Card */}
