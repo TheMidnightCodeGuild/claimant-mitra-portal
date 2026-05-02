@@ -116,7 +116,7 @@ export default function RaiseIssue({ partnerRef }) {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 p-4">
+    <div className="min-h-[100dvh] min-w-0 overflow-x-hidden bg-gray-50 px-3 py-4 sm:p-4">
       <div className="max-w-4xl mx-auto">
         {/* Issue Creation Form */}
         <div className="bg-white rounded-lg shadow-lg p-6 mb-8">
@@ -135,7 +135,7 @@ export default function RaiseIssue({ partnerRef }) {
             <button
               type="submit"
               disabled={submitting}
-              className={`w-full py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 ${
+              className={`min-h-[44px] w-full py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 touch-manipulation ${
                 submitting ? 'opacity-50 cursor-not-allowed' : ''
               }`}
             >
@@ -179,8 +179,9 @@ export default function RaiseIssue({ partnerRef }) {
               
               {hasMore && (
                 <button
+                  type="button"
                   onClick={() => fetchIssues(true)}
-                  className="w-full py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                  className="min-h-[44px] w-full py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 touch-manipulation"
                 >
                   Load More
                 </button>

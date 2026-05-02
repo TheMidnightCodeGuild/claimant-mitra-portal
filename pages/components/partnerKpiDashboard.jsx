@@ -85,7 +85,7 @@ export default function PartnerKpiDashboard({ partnerRef }) {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-b from-blue-50 to-white p-4">
+      <div className="min-h-[100dvh] min-w-0 overflow-x-hidden bg-gradient-to-b from-blue-50 to-white p-4">
         <div className="mx-auto flex max-w-7xl justify-center py-24">
           <div className="h-12 w-12 animate-spin rounded-full border-b-4 border-blue-600" />
         </div>
@@ -95,7 +95,7 @@ export default function PartnerKpiDashboard({ partnerRef }) {
 
   if (error) {
     return (
-      <div className="min-h-screen bg-gradient-to-b from-blue-50 to-white p-4">
+      <div className="min-h-[100dvh] min-w-0 overflow-x-hidden bg-gradient-to-b from-blue-50 to-white p-4">
         <div className="mx-auto max-w-7xl">
           <div className="rounded-md border border-red-200 bg-red-50 p-4 shadow-sm">
             <p className="font-medium text-red-700">{error}</p>
@@ -109,16 +109,16 @@ export default function PartnerKpiDashboard({ partnerRef }) {
   const iss = issueMetrics;
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-blue-50 via-white to-gray-50 p-4 sm:p-6">
+    <div className="min-h-[100dvh] min-w-0 overflow-x-hidden bg-gradient-to-b from-blue-50 via-white to-gray-50 p-4 sm:p-6">
       <div className="mx-auto max-w-7xl">
         <div className="mb-8 flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
           <div>
             <h2 className="bg-gradient-to-r from-blue-600 to-blue-800 bg-clip-text text-2xl font-bold text-transparent sm:text-3xl">
               Partner KPI Dashboard
             </h2>
-            <p className="mt-1 text-sm text-gray-600">
+            <p className="mt-1 text-sm text-gray-600 break-words">
               Performance metrics for referral code{' '}
-              <span className="font-mono font-semibold text-gray-800">{partnerRef}</span>
+              <span className="font-mono font-semibold text-gray-800 break-all">{partnerRef}</span>
             </p>
           </div>
         </div>
@@ -137,7 +137,7 @@ export default function PartnerKpiDashboard({ partnerRef }) {
         </Section>
 
         <Section title="Pipeline — review status">
-          <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-6">
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-6">
             <KpiCard label="Pending" value={String(m.reviewStatus.pending)} />
             <KpiCard label="Approved" value={String(m.reviewStatus.approved)} />
             <KpiCard label="Rejected" value={String(m.reviewStatus.rejected)} />

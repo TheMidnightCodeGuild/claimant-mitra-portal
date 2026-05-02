@@ -81,7 +81,7 @@ export default function Join() {
   };
 
   return (
-    <div className="min-h-screen bg-cover bg-center px-4 sm:px-6 lg:px-8 py-4 sm:py-8"
+    <div className="min-h-[100dvh] min-w-0 overflow-x-hidden bg-cover bg-center px-4 sm:px-6 lg:px-8 py-4 sm:py-8"
       style={{
         backgroundImage: "url('/images/bgsignin.jpg')"
       }}>

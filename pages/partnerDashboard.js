@@ -393,51 +393,56 @@ export default function PartnerDashboard({ userId }) {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-gray-50 to-gray-100">
+    <div className="min-h-[100dvh] min-w-0 overflow-x-hidden bg-gradient-to-b from-gray-50 to-gray-100">
       {/* Header Section */}
       <div className="p-4 sm:p-8 bg-white shadow-sm">
-        <div className="max-w-7xl mx-auto px-2 sm:px-0 flex items-center justify-between">
-          <div className="flex items-center">
-            <div className="mr-4">
-              <Image src="/images/logo.png" width={100} height={100} alt="Logo" className="mx-auto h-16 sm:h-20 w-auto" />
+        <div className="max-w-7xl mx-auto px-2 sm:px-0">
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+            <div className="flex items-start sm:items-center gap-3 min-w-0">
+              <div className="shrink-0">
+                <Image src="/images/logo.png" width={100} height={100} alt="Logo" className="mx-auto h-14 w-auto sm:h-16 md:h-20" />
+              </div>
+              <div className="min-w-0 flex-1">
+                <h2 className="text-xl sm:text-2xl md:text-3xl font-bold text-gray-900 mb-1 sm:mb-2 break-words">
+                  {partnerData ? `Welcome, ${partnerData.email}` : 'Partner Dashboard'}
+                </h2>
+                <p className="text-sm sm:text-base text-gray-600">Manage your cases and track performance</p>
+              </div>
             </div>
-            <div>
-              <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">
-                {partnerData ? `Welcome, ${partnerData.email}` : 'Partner Dashboard'}
-              </h2>
-              <p className="text-sm sm:text-base text-gray-600">Manage your cases and track performance</p>
+            <div className="flex flex-wrap items-stretch sm:items-center gap-2 sm:shrink-0 sm:justify-end w-full sm:w-auto">
+              <button
+                type="button"
+                onClick={() => partnerData && handlePasswordReset(partnerData.email)}
+                disabled={passwordResetLoading || !partnerData}
+                className="flex-1 sm:flex-initial min-h-[44px] px-3 sm:px-4 py-2 bg-blue-600 hover:bg-blue-700 disabled:opacity-50 text-white text-sm sm:text-base rounded-lg transition duration-200 inline-flex items-center justify-center gap-2 touch-manipulation"
+              >
+                {passwordResetLoading ? (
+                  <span>Sending...</span>
+                ) : (
+                  <>
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 shrink-0" viewBox="0 0 20 20" fill="currentColor" aria-hidden>
+                      <path fillRule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clipRule="evenodd" />
+                    </svg>
+                    <span className="sm:hidden">Reset</span>
+                    <span className="hidden sm:inline">Reset Password</span>
+                  </>
+                )}
+              </button>
+              <button
+                type="button"
+                onClick={handleLogout}
+                className="flex-1 sm:flex-initial min-h-[44px] px-3 sm:px-4 py-2 bg-red-600 hover:bg-red-700 text-white text-sm sm:text-base rounded-lg transition duration-200 inline-flex items-center justify-center gap-2 touch-manipulation"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 shrink-0" viewBox="0 0 20 20" fill="currentColor" aria-hidden>
+                  <path fillRule="evenodd" d="M3 3a1 1 0 00-1 1v12a1 1 0 001 1h12a1 1 0 001-1V4a1 1 0 00-1-1H3zm11 4a1 1 0 10-2 0v4a1 1 0 102 0V7z" clipRule="evenodd" />
+                  <path d="M7 7a1 1 0 011-1h4a1 1 0 110 2H8a1 1 0 01-1-1z" />
+                </svg>
+                Logout
+              </button>
             </div>
-          </div>
-          <div className="flex items-center gap-2">
-            <button
-              onClick={() => partnerData && handlePasswordReset(partnerData.email)}
-              disabled={passwordResetLoading || !partnerData}
-              className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition duration-200 flex items-center gap-2 mr-2"
-            >
-              {passwordResetLoading ? (
-                <span>Sending...</span>
-              ) : (
-                <>
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                    <path fillRule="evenodd" d="M5 9V7a5 5 0 0110 0v2a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2zm8-2v2H7V7a3 3 0 016 0z" clipRule="evenodd" />
-                  </svg>
-                  Reset Password
-                </>
-              )}
-            </button>
-            <button
-              onClick={handleLogout}
-              className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg transition duration-200 flex items-center gap-2"
-            >
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                <path fillRule="evenodd" d="M3 3a1 1 0 00-1 1v12a1 1 0 001 1h12a1 1 0 001-1V4a1 1 0 00-1-1H3zm11 4a1 1 0 10-2 0v4a1 1 0 102 0V7z" clipRule="evenodd" />
-                <path d="M7 7a1 1 0 011-1h4a1 1 0 110 2H8a1 1 0 01-1-1z" />
-              </svg>
-              Logout
-            </button>
           </div>
           {error && (
-            <div className="mt-4 p-3 sm:p-4 bg-red-50 rounded-lg border border-red-200">
+            <div className="mt-4 p-3 sm:p-4 bg-red-50 rounded-lg border border-red-200 w-full">
               <p className="text-sm sm:text-base text-red-600">{error}</p>
             </div>
           )}

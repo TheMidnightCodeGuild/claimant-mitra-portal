@@ -36,7 +36,7 @@ export default function Home() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-cover bg-center bg-no-repeat px-4 sm:px-6 lg:px-8" style={{ backgroundImage: "url('/images/bgsignin.jpg')" }}>
+    <div className="min-h-[100dvh] min-w-0 overflow-x-hidden flex items-center justify-center bg-cover bg-center bg-no-repeat px-4 sm:px-6 lg:px-8 py-6" style={{ backgroundImage: "url('/images/bgsignin.jpg')" }}>
       <div className="w-full max-w-sm sm:max-w-md space-y-6 sm:space-y-8 p-4 sm:p-6 md:p-8 bg-white rounded-xl shadow-2xl border-black border-4">
         <div className="text-center">
           <Image src="/images/logo.png" width={100} height={100} alt="Logo" className="mx-auto h-16 sm:h-20 w-auto" />
@@ -101,7 +101,7 @@ export default function Home() {
             <button
               type="submit"
               disabled={isLoading}
-              className="group relative w-full flex justify-center py-2 sm:py-3 px-3 sm:px-4 border border-transparent text-sm sm:text-base font-medium rounded-lg text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition duration-150 ease-in-out transform hover:scale-[1.02]"
+              className="group relative min-h-[44px] w-full flex justify-center items-center py-2 sm:py-3 px-3 sm:px-4 border border-transparent text-sm sm:text-base font-medium rounded-lg text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition duration-150 ease-in-out touch-manipulation sm:hover:scale-[1.02]"
             >
               {isLoading ? (
                 <div className="flex items-center">

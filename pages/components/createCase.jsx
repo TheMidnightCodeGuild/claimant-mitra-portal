@@ -174,7 +174,7 @@ export default function CreateCase({ partnerRef }) {
   };
 
   return (
-    <div className="h-screen bg-gradient-to-b from-blue-50 via-blue-100 to-blue-50 py-4 sm:py-6 px-2 sm:px-6 lg:px-8 overflow-y-auto">
+    <div className="min-h-[100dvh] bg-gradient-to-b from-blue-50 via-blue-100 to-blue-50 py-4 sm:py-6 px-2 sm:px-6 lg:px-8 overflow-y-auto overflow-x-hidden">
       <div className="max-w-5xl mx-auto">
         <div className="bg-white p-4 sm:p-8 md:p-12 rounded-2xl shadow-xl border-2 border-blue-900">
           <div className="text-center mb-6 sm:mb-12">

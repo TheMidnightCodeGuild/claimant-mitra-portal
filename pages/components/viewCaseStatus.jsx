@@ -93,7 +93,7 @@ export default function ViewCaseStatus({ partnerRef }) {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-b from-blue-50 to-white p-4">
+      <div className="min-h-[100dvh] min-w-0 overflow-x-hidden bg-gradient-to-b from-blue-50 to-white p-4">
         <div className="max-w-7xl mx-auto">
           <div className="flex justify-center items-center h-64">
             <div className="animate-spin rounded-full h-12 w-12 border-b-4 border-blue-600"></div>
@@ -105,7 +105,7 @@ export default function ViewCaseStatus({ partnerRef }) {
 
   if (error) {
     return (
-      <div className="min-h-screen bg-gradient-to-b from-blue-50 to-white p-4">
+      <div className="min-h-[100dvh] min-w-0 overflow-x-hidden bg-gradient-to-b from-blue-50 to-white p-4">
         <div className="max-w-7xl mx-auto">
           <div className="bg-red-50 border-l-4 border-red-400 p-4 rounded-md shadow-sm">
             <p className="text-red-700 font-medium">{error}</p>
@@ -116,13 +116,13 @@ export default function ViewCaseStatus({ partnerRef }) {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-blue-50 to-white p-2 sm:p-4 md:p-6">
+    <div className="min-h-[100dvh] min-w-0 overflow-x-hidden bg-gradient-to-b from-blue-50 to-white p-2 sm:p-4 md:p-6">
       <div className="max-w-7xl mx-auto">
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-2">
-          <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 bg-clip-text bg-gradient-to-r from-blue-600 to-blue-800">
+          <h2 className="text-xl sm:text-2xl md:text-3xl font-bold text-gray-900 bg-clip-text bg-gradient-to-r from-blue-600 to-blue-800">
             Case Status Overview
           </h2>
-          <p className="text-xl font-bold text-gray-600 bg-blue-50 px-3 py-1 rounded-full">
+          <p className="max-w-full break-all text-sm sm:text-base md:text-lg font-bold text-gray-600 bg-blue-50 px-3 py-1.5 rounded-full">
             Partner ID: {partnerRef}
           </p>
         </div>

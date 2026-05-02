@@ -76,11 +76,12 @@ export default function View({ userId }) {
   };
 
   return (
-    <div>
-      <div className="p-4">
+    <div className="min-w-0">
+      <div className="px-4 pt-2 pb-3 sm:p-4">
         <button
+          type="button"
           onClick={() => router.push('/partnerDashboard')}
-          className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500"
+          className="min-h-[44px] px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 hover:bg-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 touch-manipulation w-full sm:w-auto text-center sm:text-left"
         >
           ← Back to Dashboard
         </button>
