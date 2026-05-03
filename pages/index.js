@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useRouter } from 'next/router';
 import Image from "next/image";
+import PwaInstallButton from "./components/PwaInstallButton";
 export default function Home() {
   const router = useRouter();
   const [username, setUsername] = useState("");
@@ -42,6 +43,9 @@ export default function Home() {
           <Image src="/images/logo.png" width={100} height={100} alt="Logo" className="mx-auto h-16 sm:h-20 w-auto" />
           <h2 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">Welcome Partner</h2>
           <p className="text-sm sm:text-base text-gray-600">Please Sign In To Continue</p>
+          <div className="mt-4">
+            <PwaInstallButton variant="outline" />
+          </div>
         </div>
         <form className="mt-6 sm:mt-8 space-y-4 sm:space-y-6" onSubmit={handleSubmit}>
           <div className="space-y-4 sm:space-y-5">

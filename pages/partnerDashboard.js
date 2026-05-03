@@ -4,6 +4,7 @@ import { db } from '../lib/firebase';
 import { doc, getDoc, collection, query, where, getDocs, documentId } from 'firebase/firestore';
 import Image from 'next/image';
 import { getAuth, sendPasswordResetEmail } from 'firebase/auth';
+import PwaInstallButton from './components/PwaInstallButton';
 
 export async function getServerSideProps(context) {
   const { req } = context;
@@ -410,6 +411,7 @@ export default function PartnerDashboard({ userId }) {
               </div>
             </div>
             <div className="flex flex-wrap items-stretch sm:items-center gap-2 sm:shrink-0 sm:justify-end w-full sm:w-auto">
+              <PwaInstallButton variant="compact" />
               <button
                 type="button"
                 onClick={() => partnerData && handlePasswordReset(partnerData.email)}
