@@ -7,7 +7,8 @@ import { doc, getDoc } from 'firebase/firestore';
 const CreateCase = dynamic(() => import('./components/createCase'));
 const ViewCaseStatus = dynamic(() => import('./components/viewCaseStatus'));
 const RaiseIssue = dynamic(() => import('./components/raiseIssue'));
-const PartnerKpiDashboard = dynamic(() => import('./components/partnerKpiDashboard'));
+// KPI Dashboard disabled
+// const PartnerKpiDashboard = dynamic(() => import('./components/partnerKpiDashboard'));
 
 export async function getServerSideProps(context) {
   const { req } = context;
@@ -67,8 +68,9 @@ export default function View({ userId }) {
         return <ViewCaseStatus partnerRef={partnerData.partnerRef} />;
       case 'raise-issue':
         return <RaiseIssue partnerRef={partnerData.partnerRef} />;
-      case 'kpi':
-        return <PartnerKpiDashboard partnerRef={partnerData.partnerRef} />;
+      // KPI Dashboard disabled
+      // case 'kpi':
+      //   return <PartnerKpiDashboard partnerRef={partnerData.partnerRef} />;
       default:
         router.push('/partnerDashboard');
         return null;

@@ -385,9 +385,10 @@ export default function PartnerDashboard({ userId }) {
       case 'Raise Issue':
         router.push('/view?view=raise-issue');
         break;
-      case 'KPI Dashboard':
-        router.push('/view?view=kpi');
-        break;
+      // KPI Dashboard disabled
+      // case 'KPI Dashboard':
+      //   router.push('/view?view=kpi');
+      //   break;
       default:
         console.log(`Clicked ${action}`);
     }
@@ -542,7 +543,7 @@ export default function PartnerDashboard({ userId }) {
             <p className="text-sm sm:text-base text-gray-600">Report problems or raise concerns</p>
           </div>
 
-          {/* KPI Dashboard Card */}
+          {/* KPI Dashboard disabled
           <div
             onClick={() => handleActionClick('KPI Dashboard')}
             className="bg-white rounded-xl shadow-lg p-4 sm:p-6 cursor-pointer transform transition-all duration-200 hover:scale-105 hover:shadow-xl border border-gray-100"
@@ -555,6 +556,7 @@ export default function PartnerDashboard({ userId }) {
             <h3 className="text-lg sm:text-xl font-semibold text-gray-900 mb-1 sm:mb-2">KPI Dashboard</h3>
             <p className="text-sm sm:text-base text-gray-600">Cases, pipeline, financials, and support metrics</p>
           </div>
+          */}
 
           {/* Update Case Data Card */}
           {/* <div 

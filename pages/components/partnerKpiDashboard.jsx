@@ -1,3 +1,5 @@
+/* KPI Dashboard — temporarily disabled (do not delete). Uncomment to re-enable.
+
 import { useState, useEffect, useMemo } from 'react';
 import { db } from '../../lib/firebase';
 import { collection, query, where, getDocs } from 'firebase/firestore';
@@ -231,3 +233,5 @@ export default function PartnerKpiDashboard({ partnerRef }) {
     </div>
   );
 }
+
+*/
